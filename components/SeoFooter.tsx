@@ -155,6 +155,38 @@ export default function SeoFooter() {
             </ul>
           </div>
 
+          {/* Vétérinaires & Boutiques */}
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#7C6EF5", marginBottom: 14 }}>
+              Vétérinaires & Animaleries
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/marseille" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Marseille</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/nice" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Nice</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/toulon" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Toulon</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/aix-en-provence" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Aix</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/avignon" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Avignon</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires/cannes" style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>🏥 Vét. & animaleries Cannes</a>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <a href="/partenaires/rejoindre" style={{ fontSize: 13, color: "#7C6EF5", fontWeight: 600, textDecoration: "none" }}>
+                  Être référencé →
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* ParcAChien */}
           <div>
             <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#7C6EF5", marginBottom: 14 }}>
@@ -171,13 +203,16 @@ export default function SeoFooter() {
                 <a href="/blog" style={{ fontSize: 14, color: "#555", textDecoration: "none" }}>📝 Blog & conseils</a>
               </li>
               <li style={{ marginBottom: 8 }}>
+                <a href="/partenaires" style={{ fontSize: 14, color: "#555", textDecoration: "none" }}>🏥 Vétérinaires & boutiques</a>
+              </li>
+              <li style={{ marginBottom: 8 }}>
                 <a href="/login" style={{ fontSize: 14, color: "#555", textDecoration: "none" }}>👤 Se connecter</a>
               </li>
             </ul>
             <div style={{ marginTop: 20, padding: "12px 14px", background: "#f0eeff", borderRadius: 10 }}>
               <p style={{ fontSize: 11, color: "#7C6EF5", fontWeight: 700, marginBottom: 4 }}>Mots-clés</p>
               <p style={{ fontSize: 11, color: "#888", lineHeight: 1.6, margin: 0 }}>
-                parc à chien PACA · espace canin Marseille · jardin canin Nice · aire canine Toulon · chien sans laisse · caniparc · parc chien 13008 · parc chien 13006 · parc chien proche de moi
+                parc à chien PACA · espace canin Marseille · jardin canin Nice · aire canine Toulon · chien sans laisse · caniparc · vétérinaire chien Marseille · animalerie croquettes PACA · parc chien 13008
               </p>
             </div>
             <p style={{ fontSize: 12, color: "#bbb", marginTop: 16 }}>

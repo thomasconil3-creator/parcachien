@@ -43,6 +43,10 @@ const DEPTS = [
 
 const THEMES = ["clotured", "sans-laisse", "agility", "gratuit"];
 
+const PARTNER_CITIES = [
+  "marseille", "nice", "toulon", "aix-en-provence", "avignon", "cannes",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const citySlugs = [...new Set(PACA_PARKS.map((p) => cityToSlug(p.city)))];
   const now = new Date();
@@ -115,6 +119,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.72,
+    })),
+
+    // ── Annuaire partenaires ───────────────────────────────────────────────
+    { url: `${BASE_URL}/partenaires`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.85 },
+    { url: `${BASE_URL}/partenaires/rejoindre`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.90 },
+    ...PARTNER_CITIES.map((ville) => ({
+      url: `${BASE_URL}/partenaires/${ville}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.82,
     })),
   ];
 }
