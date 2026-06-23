@@ -13,7 +13,7 @@ import FeedPage from "@/components/FeedPage";
 import ForumPage from "@/components/ForumPage";
 import MessagesPage from "@/components/MessagesPage";
 import { useStore } from "@/lib/store";
-import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle } from "lucide-react";
+import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -145,6 +145,24 @@ export default function Home() {
             </button>
           ))}
         </div>
+
+        {/* Blog link */}
+        <a
+          href="/blog"
+          title="Blog"
+          className="p-2.5 rounded-2xl border border-[#E2DDD5] text-[#7D7269] hover:border-amber-400 hover:text-amber-500 transition-all hidden sm:flex items-center"
+        >
+          <BookOpen size={15} />
+        </a>
+
+        {/* Parcs link */}
+        <a
+          href="/parcs"
+          title="Tous les parcs"
+          className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-2xl border border-[#E2DDD5] text-[#7D7269] hover:border-amber-400 hover:text-amber-500 transition-all"
+        >
+          <PawPrint size={13} /> Parcs
+        </a>
 
         {/* Profile button */}
         <button
