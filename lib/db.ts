@@ -75,6 +75,16 @@ export async function getMyActiveCheckin(userId: string) {
 
 // ─── FEED POSTS ──────────────────────────────────────────────────────────────
 
+export async function uploadPhoto(file: File, userId: string): Promise<string> {
+  const supabase = db();
+  const ext = file.name.split('.').pop();
+  const path = `${userId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('photos').upload(path, file);
+  if (error) throw error;
+  const { data } = supabase.storage.from('photos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
 export async function getFeedPosts(userId?: string) {
   const { data: posts } = await db()
     .from("feed_posts")

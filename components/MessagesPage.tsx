@@ -27,6 +27,25 @@ export default function MessagesPage() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
+    if (!userId || !activeUserId) return;
+    const channel = supabase
+      .channel(`messages-${userId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `receiver_id=eq.${userId}`
+      }, (payload) => {
+        // Verify it's from the active chat
+        if (payload.new.sender_id === activeUserId || payload.new.receiver_id === activeUserId) {
+          setMessages(prev => [...prev, payload.new as any]);
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId, activeUserId]);
+
+  useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
       const uid = data.user?.id ?? null;
       setUserId(uid);

@@ -14,6 +14,7 @@ import ForumPage from "@/components/ForumPage";
 import MessagesPage from "@/components/MessagesPage";
 import { useStore } from "@/lib/store";
 import { createClient } from "@/utils/supabase/client";
+import { getActiveCheckins, addCheckin, getMyDog } from "@/lib/db";
 import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
@@ -47,26 +48,68 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyOnly, setNearbyOnly] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [dbMyDog, setDbMyDog] = useState<any>(null);
 
   const supabase = createClient();
+
+  const fetchCheckins = async () => {
+    try {
+      const data = await getActiveCheckins();
+      setCheckins(data.map((c: any) => ({
+        id: c.id,
+        parkId: c.park_id,
+        parkName: c.park_name,
+        city: c.city,
+        dogId: c.dog_id,
+        dog: { name: c.dog_name, breed: c.dog_breed },
+        timestamp: new Date(c.created_at).getTime(),
+        expiresAt: new Date(c.expires_at).getTime(),
+      })));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUserEmail(data.user?.email ?? null);
+      setUserId(data.user?.id ?? null);
+      if (data.user?.id) getMyDog(data.user.id).then(setDbMyDog).catch(console.error);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserEmail(session?.user?.email ?? null);
-      if (!session) setSection("map");
+      setUserId(session?.user?.id ?? null);
+      if (!session) {
+        setSection("map");
+        setDbMyDog(null);
+      } else {
+        getMyDog(session.user.id).then(setDbMyDog).catch(console.error);
+      }
     });
-    return () => subscription.unsubscribe();
+
+    fetchCheckins();
+
+    const channel = supabase
+      .channel('public:checkins')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'checkins' }, () => {
+        fetchCheckins();
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
-  const { myDog, addCheckin, getActiveCheckins, checkins, stats } = useStore();
-  const totalCheckins = checkins.filter((c) => c.expiresAt > Date.now()).length;
+  const { myDog: localMyDog, stats } = useStore();
+  const totalCheckins = checkins.length;
 
   const getDistance = useCallback((lat: number, lng: number) => {
     if (!userLocation) return Infinity;
@@ -99,7 +142,15 @@ export default function Home() {
     });
   };
 
-  const handleCheckin = (park: Park) => addCheckin(park.id, park.name, park.city);
+  const handleCheckin = async (park: Park) => {
+    if (!userId || !dbMyDog) return;
+    try {
+      await addCheckin(userId, { id: dbMyDog.id, name: dbMyDog.name, breed: dbMyDog.breed }, park.id, park.name, park.city);
+      fetchCheckins();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleParkFromStory = (parkId: string) => {
     const park = PACA_PARKS.find((p) => p.id === parkId);
@@ -234,7 +285,7 @@ export default function Home() {
       <div className="relative z-[498] bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-100 px-4 py-1.5 flex items-center gap-4 text-[11px] font-medium tracking-wide border-b border-gray-700/50">
         <span className="flex items-center gap-1.5"><MapIcon size={12} className="text-amber-400"/> <strong>{filteredParks.length}</strong> parcs {nearbyOnly ? "à 10km" : "en PACA"}</span>
         <span className="flex items-center gap-1.5"><PawPrint size={12} className="text-emerald-400"/> <strong>{totalCheckins}</strong> chien{totalCheckins > 1 ? "s" : ""} en live</span>
-        {myDog && <span className="hidden sm:flex items-center gap-1.5 text-amber-100 font-bold ml-4"><span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" /> {myDog.name}</span>}
+        {dbMyDog && <span className="hidden sm:flex items-center gap-1.5 text-amber-100 font-bold ml-4"><span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" /> {dbMyDog.name}</span>}
         <span className="ml-auto opacity-50 font-mono text-[9px]">OSM</span>
       </div>
 
@@ -269,7 +320,7 @@ export default function Home() {
                     <div key={park.id} onClick={() => { setSelectedPark(park); setView("map"); }} className="cursor-pointer">
                       <ParkCard
                         park={park}
-                        checkinCount={getActiveCheckins(park.id).length}
+                        checkinCount={checkins.filter(c => c.parkId === park.id).length}
                         onCheckin={() => handleCheckin(park)}
                         distance={dist !== null && dist !== Infinity ? dist : undefined}
                       />

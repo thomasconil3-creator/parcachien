@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { getFeedPosts, addFeedPost, toggleLike, addComment } from "@/lib/db";
+import { getFeedPosts, addFeedPost, toggleLike, addComment, uploadPhoto } from "@/lib/db";
 import { Heart, MessageCircle, Camera, Send, MapPin, X, Image as ImageIcon, PawPrint, Loader2 } from "lucide-react";
 import { PACA_PARKS } from "@/lib/parks-data";
 
@@ -23,6 +23,7 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [newText, setNewText] = useState("");
   const [newPhoto, setNewPhoto] = useState<string>();
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [selectedPark, setSelectedPark] = useState("");
   const [openComments, setOpenComments] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
@@ -45,6 +46,15 @@ export default function FeedPage() {
       setPosts(p);
       setLoading(false);
     });
+
+    const channel = supabase.channel('public:feed_posts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feed_posts' }, async () => {
+        const { data } = await supabase.auth.getUser();
+        const p = await getFeedPosts(data.user?.id ?? undefined);
+        setPosts(p);
+      }).subscribe();
+      
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const refresh = async () => {
@@ -53,6 +63,7 @@ export default function FeedPage() {
   };
 
   const handlePhoto = (file: File) => {
+    setPhotoFile(file);
     const r = new FileReader();
     r.onload = (e) => setNewPhoto(e.target?.result as string);
     r.readAsDataURL(file);
@@ -62,18 +73,27 @@ export default function FeedPage() {
     if (!newText.trim() && !newPhoto) return;
     if (!userId) return;
     setPosting(true);
-    const park = PACA_PARKS.find((p) => p.id === selectedPark);
-    await addFeedPost(userId, {
-      author_dog_name: dogName,
-      author_breed: dogBreed,
-      text: newText,
-      photo: newPhoto,
-      park_id: park?.id,
-      park_name: park?.name,
-    });
-    setNewText(""); setNewPhoto(undefined); setSelectedPark(""); setShowCompose(false);
-    await refresh();
-    setPosting(false);
+    try {
+      const park = PACA_PARKS.find((p) => p.id === selectedPark);
+      let photoUrl = newPhoto;
+      if (photoFile) {
+        photoUrl = await uploadPhoto(photoFile, userId);
+      }
+      await addFeedPost(userId, {
+        author_dog_name: dogName,
+        author_breed: dogBreed,
+        text: newText,
+        photo: photoUrl,
+        park_id: park?.id,
+        park_name: park?.name,
+      });
+      setNewText(""); setNewPhoto(undefined); setPhotoFile(null); setSelectedPark(""); setShowCompose(false);
+      await refresh();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setPosting(false);
+    }
   };
 
   const handleLike = async (postId: string, likedByMe: boolean) => {
@@ -126,7 +146,7 @@ export default function FeedPage() {
                   <p className="text-xs text-[#7D7269]">{dogBreed}</p>
                 </div>
               </div>
-              <button onClick={() => { setShowCompose(false); setNewPhoto(undefined); setNewText(""); }}>
+              <button onClick={() => { setShowCompose(false); setNewPhoto(undefined); setPhotoFile(null); setNewText(""); }}>
                 <X size={18} className="text-[#7D7269]" />
               </button>
             </div>
@@ -140,7 +160,7 @@ export default function FeedPage() {
               {newPhoto && (
                 <div className="relative rounded-2xl overflow-hidden">
                   <img src={newPhoto} alt="preview" className="w-full object-cover max-h-48" />
-                  <button onClick={() => setNewPhoto(undefined)} className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1"><X size={13} /></button>
+                  <button onClick={() => { setNewPhoto(undefined); setPhotoFile(null); }} className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1"><X size={13} /></button>
                 </div>
               )}
 

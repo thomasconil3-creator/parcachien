@@ -5,7 +5,9 @@ import { Park } from "@/lib/parks-data";
 import { useStore } from "@/lib/store";
 import { computeMatchScore, getMatchLabel } from "@/lib/dogmatch";
 import { ParkReport } from "@/lib/types";
-import { X, Heart, MapPin, Clock, Shield, AlertTriangle, Calendar, Send, ThumbsUp, Zap, Star, MessageSquare } from "lucide-react";
+import { X, Heart, MapPin, Clock, Shield, AlertTriangle, Calendar, Send, ThumbsUp, Zap, Star, MessageSquare, Loader2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { getActiveCheckins, getActiveStories, addStory, likeStory, getMyDog } from "@/lib/db";
 
 const REPORT_TYPES: { type: ParkReport["type"]; label: string; emoji: string }[] = [
   { type: "parc_propre",    label: "Parc propre",      emoji: "✅" },
@@ -28,7 +30,7 @@ type TabId = typeof TABS[number]["id"];
 interface Props { park: Park; onClose: () => void; onCheckin: () => void; }
 
 export default function ParkPanel({ park, onClose, onCheckin }: Props) {
-  const { myDog, getActiveCheckins, addReport, getActiveReports, getEvents, addEvent, getActiveStories, addStory, likeStory, favoriteParks, toggleFavorite } = useStore();
+  const { addReport, getActiveReports, getEvents, addEvent, favoriteParks, toggleFavorite } = useStore();
 
   const [tab, setTab] = useState<TabId>("live");
   const [weather, setWeather] = useState<{ temp: number; icon: string } | null>(null);
@@ -37,10 +39,49 @@ export default function ParkPanel({ park, onClose, onCheckin }: Props) {
   const [newStoryText, setNewStoryText] = useState("");
   const [reportSent, setReportSent] = useState<string | null>(null);
 
-  const checkins  = getActiveCheckins(park.id);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [stories, setStories] = useState<any[]>([]);
+  const [myDog, setMyDog] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const supabase = createClient();
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData.user) {
+          setUserId(userData.user.id);
+          const dog = await getMyDog(userData.user.id);
+          setMyDog(dog);
+        }
+
+        const ci = await getActiveCheckins(park.id);
+        setCheckins(ci.map((c: any) => ({
+          id: c.id, parkId: c.park_id, parkName: c.park_name, city: c.city,
+          dogId: c.dog_id, dog: { name: c.dog_name, breed: c.dog_breed, age: 24, weight: 'moyen', gender: 'male', sterilized: true },
+          timestamp: new Date(c.created_at).getTime(),
+          expiresAt: new Date(c.expires_at).getTime()
+        })));
+
+        const st = await getActiveStories();
+        setStories(st.filter((s:any) => s.park_id === park.id).map((s:any) => ({
+          id: s.id, parkId: s.park_id, parkName: s.park_name, dogName: s.dog_name,
+          emoji: s.emoji, text: s.text, likes: s.likes,
+          expiresAt: new Date(s.expires_at).getTime()
+        })));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [park.id]);
+
   const reports   = getActiveReports(park.id);
   const events    = getEvents(park.id);
-  const stories   = getActiveStories().filter((s) => s.parkId === park.id);
   const isFav     = favoriteParks.includes(park.id);
   const myCheckin = myDog ? checkins.find((c) => c.dogId === myDog.id) : null;
 
@@ -65,10 +106,20 @@ export default function ParkPanel({ park, onClose, onCheckin }: Props) {
     setShowEventForm(false);
   };
 
-  const handleAddStory = () => {
-    if (!newStoryText.trim() || !myDog) return;
-    addStory({ parkId: park.id, parkName: park.name, dogName: myDog.name, emoji: "📸", text: newStoryText });
-    setNewStoryText("");
+  const handleAddStory = async () => {
+    if (!newStoryText.trim() || !myDog || !userId) return;
+    try {
+      await addStory(userId, { park_id: park.id, park_name: park.name, dog_name: myDog.name, emoji: "📸", text: newStoryText });
+      setNewStoryText("");
+      const st = await getActiveStories();
+      setStories(st.filter((s:any) => s.park_id === park.id).map((s:any) => ({
+        id: s.id, parkId: s.park_id, parkName: s.park_name, dogName: s.dog_name,
+        emoji: s.emoji, text: s.text, likes: s.likes,
+        expiresAt: new Date(s.expires_at).getTime()
+      })));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const elapsed = (ts: number) => {
@@ -172,7 +223,9 @@ export default function ParkPanel({ park, onClose, onCheckin }: Props) {
         {/* LIVE */}
         {tab === "live" && (
           <div className="space-y-3">
-            {checkins.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center py-10"><Loader2 className="animate-spin text-amber-500" /></div>
+            ) : checkins.length === 0 ? (
               <div className="text-center py-10">
                 <div className="w-16 h-16 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-3">
                   <span className="text-3xl">🐾</span>
@@ -286,7 +339,10 @@ export default function ParkPanel({ park, onClose, onCheckin }: Props) {
                     <span className="text-xs text-[#7D7269]">expire dans {h}h</span>
                   </div>
                   <p className="text-sm text-[#242019] leading-relaxed mb-2">{story.text}</p>
-                  <button onClick={() => likeStory(story.id)} className="flex items-center gap-1 text-xs text-pink-500 hover:text-pink-600 transition-colors">
+                  <button onClick={async () => {
+                    await likeStory(story.id, story.likes);
+                    setStories(stories.map(s => s.id === story.id ? { ...s, likes: s.likes + 1 } : s));
+                  }} className="flex items-center gap-1 text-xs text-pink-500 hover:text-pink-600 transition-colors">
                     <ThumbsUp size={12} /> {story.likes}
                   </button>
                 </div>

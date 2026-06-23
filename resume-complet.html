@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParcAChien — Résumé complet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0D0D12; color: #E8E6F0; min-height: 100vh; }
+
+    /* HERO */
+    .hero {
+      position: relative; height: 340px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1600&q=80');
+      background-size: cover; background-position: center; filter: brightness(0.2);
+    }
+    .hero-content { position: relative; z-index: 1; padding: 0 20px; }
+    .badge { display: inline-block; background: #7C6EF5; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: #fff; }
+    .hero h1 span { color: #F59500; }
+    .hero-sub { margin-top: 12px; color: #A09BBF; font-size: 1rem; }
+    .hero-date { margin-top: 16px; font-size: 12px; color: #6B6880; letter-spacing: 1px; }
+
+    /* LAYOUT */
+    .main { max-width: 1100px; margin: 0 auto; padding: 60px 20px 80px; }
+
+    /* SECTION TITLE */
+    .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #7C6EF5; margin-bottom: 20px; }
+
+    /* CARDS GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 48px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+    @media (max-width: 800px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+    /* STAT CARDS */
+    .stat { background: #16151F; border: 1px solid #2A2738; border-radius: 14px; padding: 20px 16px; text-align: center; }
+    .stat-num { font-size: 36px; font-weight: 800; display: block; }
+    .stat-label { font-size: 11px; color: #6B6880; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+    /* FEATURE CARDS */
+    .card { background: #16151F; border: 1px solid #2A2738; border-radius: 18px; padding: 24px; }
+    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .card-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .card-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .card-sub { font-size: 11px; color: #6B6880; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+    .card ul { list-style: none; padding: 0; }
+    .card ul li { font-size: 13px; color: #A09BBF; padding: 5px 0; border-bottom: 1px solid #1E1D2A; display: flex; align-items: center; gap: 8px; }
+    .card ul li:last-child { border-bottom: none; }
+    .card ul li::before { content: '→'; color: #7C6EF5; font-weight: bold; flex-shrink: 0; }
+
+    /* STATUS ROWS */
+    .status-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
+    .status-item { background: #16151F; border: 1px solid #2A2738; border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: #22C55E; box-shadow: 0 0 8px rgba(34,197,94,0.6); }
+    .dot-yellow { background: #F59E0B; box-shadow: 0 0 8px rgba(245,158,11,0.6); }
+    .status-text { flex: 1; }
+    .status-text strong { font-size: 14px; color: #E8E6F0; }
+    .status-text p { font-size: 12px; color: #6B6880; margin-top: 2px; }
+    .status-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+    .tag-live { background: rgba(34,197,94,0.12); color: #22C55E; }
+    .tag-todo { background: rgba(245,158,11,0.12); color: #F59E0B; }
+
+    /* DIVIDER */
+    .divider { height: 1px; background: #1E1D2A; margin-bottom: 48px; }
+
+    /* ALERT */
+    .alert { background: #16151F; border: 1px solid #F59E0B44; border-radius: 16px; padding: 24px 28px; display: flex; gap: 16px; align-items: flex-start; margin-bottom: 48px; }
+    .alert-icon { font-size: 28px; flex-shrink: 0; }
+    .alert h3 { color: #F59E0B; font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .alert p { color: #6B6880; font-size: 13px; line-height: 1.7; }
+    .alert code { background: #0D0D12; border: 1px solid #2A2738; border-radius: 6px; padding: 3px 8px; font-size: 11px; color: #A78BFA; font-family: monospace; }
+
+    /* TECH STACK */
+    .tech-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+    .tech-pill { background: #16151F; border: 1px solid #2A2738; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #A09BBF; font-weight: 600; }
+
+    footer { text-align: center; padding: 32px 20px; border-top: 1px solid #1E1D2A; color: #4A4760; font-size: 12px; }
+    footer span { color: #7C6EF5; }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="badge">🐾 Résumé complet</div>
+      <h1>ParcAChien<br><span>Site + Application</span></h1>
+      <p class="hero-sub">Tout ce qui a été construit, fonctionnalité par fonctionnalité</p>
+      <p class="hero-date">23 juin 2026 · Lancement prévu 28 juin 2026</p>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="grid-4" style="margin-bottom:48px">
+      <div class="stat"><span class="stat-num" style="color:#F59500">308+</span><span class="stat-label">Parcs en PACA</span></div>
+      <div class="stat"><span class="stat-num" style="color:#22C55E">55</span><span class="stat-label">Pages générées</span></div>
+      <div class="stat"><span class="stat-num" style="color:#7C6EF5">6</span><span class="stat-label">Départements couverts</span></div>
+      <div class="stat"><span class="stat-num" style="color:#60A5FA">0</span><span class="stat-label">Erreurs build</span></div>
+    </div>
+
+    <!-- SITE INTERNET PUBLIC -->
+    <p class="section-title">🌐 Site Internet Public (parcachien.com)</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,149,0,0.12)">🗺️</div>
+          <div><div class="card-title">Carte Interactive</div><div class="card-sub">Page d'accueil • Public</div></div>
+        </div>
+        <ul>
+          <li>308+ parcs à chiens en PACA affichés</li>
+          <li>Clustering violet (regroupement des pins)</li>
+          <li>Filtres par département et par ville</li>
+          <li>Vue carte + vue liste switchable</li>
+          <li>Géolocalisation "Près de moi" (10km)</li>
+          <li>Compteur live de chiens présents</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(96,165,250,0.12)">🔍</div>
+          <div><div class="card-title">SEO & Référencement</div><div class="card-sub">Google • Organique</div></div>
+        </div>
+        <ul>
+          <li>Page /parcs → index par département</li>
+          <li>Pages /parcs/marseille, /nice, /toulon… (8 villes)</li>
+          <li>Blog /blog avec 3 articles complets</li>
+          <li>Sitemap XML avec 55 URLs</li>
+          <li>robots.txt + OG image (partage réseaux)</li>
+          <li>Sitemap soumis à Google Search Console</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- APP MEMBRES -->
+    <p class="section-title">📱 Application Membres (après connexion)</p>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,149,0,0.12)">📰</div>
+          <div><div class="card-title">Fil d'Actu</div><div class="card-sub">Feed communautaire</div></div>
+        </div>
+        <ul>
+          <li>Publications avec texte + photo</li>
+          <li>Tag d'un parc sur une publication</li>
+          <li>Likes et commentaires en temps réel</li>
+          <li>Upload photo depuis galerie ou caméra</li>
+          <li>Données partagées via Supabase</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(124,110,245,0.12)">💬</div>
+          <div><div class="card-title">Forum</div><div class="card-sub">7 catégories</div></div>
+        </div>
+        <ul>
+          <li>Général, Santé, Éducation, Bons plans</li>
+          <li>Perdu/Trouvé, Événements, Races</li>
+          <li>Créer un sujet + répondre</li>
+          <li>Likes sur les réponses</li>
+          <li>Sujets épinglés (pinned)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(34,197,94,0.12)">✉️</div>
+          <div><div class="card-title">Messagerie</div><div class="card-sub">Privé entre membres</div></div>
+        </div>
+        <ul>
+          <li>Conversations 1-à-1 entre membres</li>
+          <li>Messages persistants en base</li>
+          <li>Historique des conversations</li>
+          <li>Envoi avec Entrée ou bouton</li>
+          <li>Indicateur non lu</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,149,0,0.12)">🐾</div>
+          <div><div class="card-title">Profil Chien</div><div class="card-sub">Par compte</div></div>
+        </div>
+        <ul>
+          <li>Nom, race, âge, taille, genre</li>
+          <li>Stérilisé(e) + Vaccins à jour</li>
+          <li>Caractère (joueur, calme, dominant…)</li>
+          <li>Sauvegardé en base Supabase</li>
+          <li>1 profil chien par compte</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,149,0,0.12)">📍</div>
+          <div><div class="card-title">Check-in Live</div><div class="card-sub">Présence en temps réel</div></div>
+        </div>
+        <ul>
+          <li>Se signaler présent dans un parc</li>
+          <li>Expiration automatique après 3h</li>
+          <li>Visible sur la carte par tous</li>
+          <li>Stories liées au parc</li>
+          <li>Badges et gamification</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(96,165,250,0.12)">📖</div>
+          <div><div class="card-title">Stories</div><div class="card-sub">24h de vie</div></div>
+        </div>
+        <ul>
+          <li>Publier une story depuis un parc</li>
+          <li>Expire automatiquement après 24h</li>
+          <li>Liker les stories des autres</li>
+          <li>Bannière en haut de l'app</li>
+          <li>Navigation vers le parc lié</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AUTH -->
+    <p class="section-title">🔐 Système d'Authentification</p>
+    <div class="grid-2" style="margin-bottom:48px">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(34,197,94,0.12)">👤</div>
+          <div><div class="card-title">Non Connecté</div><div class="card-sub">Accès public</div></div>
+        </div>
+        <ul>
+          <li>Carte interactive avec tous les parcs</li>
+          <li>Filtres et recherche</li>
+          <li>Voir les check-ins en live</li>
+          <li>Bouton "Connexion" dans le header</li>
+          <li>Bouton "Rejoindre" dans la bottom nav</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(124,110,245,0.12)">🏠</div>
+          <div><div class="card-title">Connecté</div><div class="card-sub">Accès app complet</div></div>
+        </div>
+        <ul>
+          <li>Tous les onglets : Explorer, Fil, Messages, Forum</li>
+          <li>Publier sur le feed</li>
+          <li>Participer au forum</li>
+          <li>Envoyer des messages privés</li>
+          <li>Check-in dans les parcs</li>
+          <li>Profil chien sauvegardé</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STACK TECHNIQUE -->
+    <p class="section-title">⚙️ Stack Technique</p>
+    <div class="tech-grid">
+      <div class="tech-pill">Next.js 16.2.9</div>
+      <div class="tech-pill">React 19</div>
+      <div class="tech-pill">TypeScript</div>
+      <div class="tech-pill">Tailwind CSS v4</div>
+      <div class="tech-pill">Leaflet + MarkerCluster</div>
+      <div class="tech-pill">Supabase Auth</div>
+      <div class="tech-pill">Supabase PostgreSQL</div>
+      <div class="tech-pill">Zustand (état local)</div>
+      <div class="tech-pill">Lucide Icons</div>
+      <div class="tech-pill">Vercel (déploiement)</div>
+      <div class="tech-pill">GitHub CI/CD</div>
+      <div class="tech-pill">OpenStreetMap (données)</div>
+    </div>
+
+    <!-- ÉTAT DES FONCTIONNALITÉS -->
+    <p class="section-title">📊 État des Fonctionnalités</p>
+    <div class="status-row">
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Carte interactive + Clustering</strong><p>308+ parcs, filtres, géolocalisation, vue liste</p></div><div class="status-tag tag-live">En ligne</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Pages SEO par ville</strong><p>Marseille, Nice, Toulon, Aix, Avignon, Cannes…</p></div><div class="status-tag tag-live">En ligne</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Blog avec 3 articles</strong><p>Top 10 Marseille, Première visite, Velox IA</p></div><div class="status-tag tag-live">En ligne</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Authentification (login/inscription)</strong><p>Email + mot de passe via Supabase Auth</p></div><div class="status-tag tag-live">En ligne</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Fil d'actualité → Supabase</strong><p>Posts, likes, commentaires partagés entre tous les membres</p></div><div class="status-tag tag-live">Déployé</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Forum → Supabase</strong><p>Threads, réponses, likes, 7 catégories</p></div><div class="status-tag tag-live">Déployé</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Messagerie privée → Supabase</strong><p>Conversations persistantes entre membres</p></div><div class="status-tag tag-live">Déployé</div></div>
+      <div class="status-item"><div class="status-dot dot-green"></div><div class="status-text"><strong>Profil chien → Supabase</strong><p>Sauvegardé par compte, synchronisé sur tous les appareils</p></div><div class="status-tag tag-live">Déployé</div></div>
+      <div class="status-item"><div class="status-dot dot-yellow"></div><div class="status-text"><strong>Tables Supabase à créer</strong><p>Coller supabase-schema.sql dans l'éditeur SQL Supabase</p></div><div class="status-tag tag-todo">Action requise</div></div>
+    </div>
+
+    <!-- ACTION MANUELLE -->
+    <div class="alert">
+      <div class="alert-icon">⚠️</div>
+      <div>
+        <h3>1 action manuelle pour activer la base de données</h3>
+        <p>
+          Ouvrir <strong style="color:#E8E6F0">supabase.com</strong> → ton projet → <strong style="color:#E8E6F0">SQL Editor</strong><br>
+          Coller le contenu de <code>C:\Users\TC\Desktop\Projets\parcachien\supabase-schema.sql</code><br>
+          Cliquer <strong style="color:#E8E6F0">Run</strong> → Les 9 tables sont créées avec les règles de sécurité.<br><br>
+          Sans ça : le login fonctionne, la carte fonctionne, mais le feed/forum/messages ne sauvegardent pas.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    ParcAChien &nbsp;·&nbsp; <span>parcachien.com</span> &nbsp;·&nbsp; Lancement 28 juin 2026 &nbsp;·&nbsp; Velox IA — Thomas Conil
+  </footer>
+
+</body>
+</html>

@@ -1,15 +1,39 @@
 "use client";
 
-import { useStore } from "@/lib/store";
+import { useState, useEffect } from "react";
 import { ThumbsUp, Clock } from "lucide-react";
+import { getActiveStories, likeStory } from "@/lib/db";
+import { createClient } from "@/utils/supabase/client";
 
 interface Props {
   onParkSelect?: (parkId: string) => void;
 }
 
 export default function StoriesBanner({ onParkSelect }: Props) {
-  const { getActiveStories, likeStory } = useStore();
-  const stories = getActiveStories().slice(0, 10);
+  const [stories, setStories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadStories = async () => {
+      try {
+        const st = await getActiveStories();
+        setStories(st.slice(0, 10).map((s:any) => ({
+          id: s.id, parkId: s.park_id, parkName: s.park_name, dogName: s.dog_name,
+          emoji: s.emoji, text: s.text, likes: s.likes,
+          expiresAt: new Date(s.expires_at).getTime()
+        })));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadStories();
+    
+    const supabase = createClient();
+    const channel = supabase.channel('public:stories')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stories' }, () => {
+        loadStories();
+      }).subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   if (stories.length === 0) return null;
 
@@ -37,7 +61,13 @@ export default function StoriesBanner({ onParkSelect }: Props) {
               <p className="text-xs font-medium text-gray-700 mt-2 line-clamp-2 leading-relaxed relative z-10">{story.text}</p>
               
               <button
-                onClick={(e) => { e.stopPropagation(); likeStory(story.id); }}
+                onClick={async (e) => { 
+                  e.stopPropagation(); 
+                  try {
+                    await likeStory(story.id, story.likes);
+                    setStories(stories.map(s => s.id === story.id ? { ...s, likes: s.likes + 1 } : s));
+                  } catch (err) { console.error(err); }
+                }}
                 className="mt-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-500 hover:text-pink-600 transition-colors relative z-10 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100"
               >
                 <ThumbsUp size={12} className="transform group-hover:scale-110 transition-transform" /> {story.likes} j'aime
