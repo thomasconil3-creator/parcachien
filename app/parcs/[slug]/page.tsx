@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PACA_PARKS } from "@/lib/parks-data";
+import { cityToSlug } from "@/lib/utils";
+import SeoFooter from "@/components/SeoFooter";
 
 const CITY_META: Record<string, { title: string; description: string; dept: string }> = {
   marseille: {
@@ -44,15 +46,6 @@ const CITY_META: Record<string, { title: string; description: string; dept: stri
     dept: "06",
   },
 };
-
-function cityToSlug(city: string) {
-  return city
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-}
 
 export async function generateStaticParams() {
   const cities = [...new Set(PACA_PARKS.map((p) => cityToSlug(p.city)))];
@@ -208,6 +201,7 @@ export default async function ParcsCityPage({ params }: { params: Promise<{ slug
           🗺️ Voir la carte interactive
         </a>
       </div>
+      <SeoFooter />
     </main>
   );
 }

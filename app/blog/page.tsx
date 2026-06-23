@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import SeoFooter from "@/components/SeoFooter";
 
 export const metadata: Metadata = {
   title: "Blog — ParcAChien",
@@ -89,6 +90,7 @@ export default function BlogPage() {
           </a>
         ))}
       </div>
+      <SeoFooter />
     </main>
   );
 }

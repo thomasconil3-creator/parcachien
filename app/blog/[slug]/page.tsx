@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import SeoFooter from "@/components/SeoFooter";
 
 const ARTICLES: Record<string, {
   title: string;
@@ -188,6 +189,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
           🗺️ Explorer les parcs sur la carte
         </a>
       </div>
+      <SeoFooter />
     </main>
   );
 }

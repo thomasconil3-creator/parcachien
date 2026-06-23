@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { PACA_PARKS } from "@/lib/parks-data";
+import { cityToSlug } from "@/lib/utils";
+import SeoFooter from "@/components/SeoFooter";
 
 export const metadata: Metadata = {
   title: "Tous les parcs à chiens en PACA — ParcAChien",
@@ -12,15 +14,6 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
-function cityToSlug(city: string) {
-  return city
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-}
 
 const DEPT_NAMES: Record<string, string> = {
   "13": "Bouches-du-Rhône",
@@ -113,6 +106,7 @@ export default function ParcsIndexPage() {
           🗺️ Voir la carte interactive
         </a>
       </div>
+      <SeoFooter />
     </main>
   );
 }
