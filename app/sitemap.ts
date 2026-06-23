@@ -21,38 +21,100 @@ const MARSEILLE_ARRONDISSEMENTS = [
   "13013", "13014", "13015", "13016",
 ];
 
+const NICE_SECTEURS = [
+  "cimiez", "musiciens", "vieux-nice", "madeleine",
+  "riquier", "liberation", "saint-isidore", "promenade",
+];
+
+const AIX_SECTEURS = [
+  "centre-ville", "celony", "jas-de-bouffan",
+  "les-milles", "puyricard", "nord",
+];
+
+const TOULON_SECTEURS = [
+  "centre", "pont-du-las", "mourillon",
+  "parc-raoulx", "parc-lices", "la-valette",
+];
+
+const DEPTS = [
+  "bouches-du-rhone", "var", "alpes-maritimes",
+  "vaucluse", "alpes-de-haute-provence", "hautes-alpes",
+];
+
+const THEMES = ["clotured", "sans-laisse", "agility", "gratuit"];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const citySlugs = [...new Set(PACA_PARKS.map((p) => cityToSlug(p.city)))];
   const now = new Date();
 
   return [
-    // Pages principales
+    // ── Pages principales ──────────────────────────────────────────────────
     { url: BASE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${BASE_URL}/parcs`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE_URL}/parcs`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${BASE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
 
-    // Pages par ville
+    // ── Pages par ville ────────────────────────────────────────────────────
     ...citySlugs.map((slug) => ({
       url: `${BASE_URL}/parcs/${slug}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
-      priority: slug === "marseille" ? 0.95 : 0.8,
+      priority: slug === "marseille" ? 0.95 : slug === "nice" || slug === "toulon" || slug === "aix-en-provence" ? 0.90 : 0.80,
     })),
 
-    // Pages par arrondissement Marseille
+    // ── Pages par département ──────────────────────────────────────────────
+    ...DEPTS.map((dept) => ({
+      url: `${BASE_URL}/parcs/departement/${dept}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    })),
+
+    // ── Marseille : arrondissements ────────────────────────────────────────
     ...MARSEILLE_ARRONDISSEMENTS.map((arr) => ({
       url: `${BASE_URL}/parcs/marseille/${arr}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.78,
+    })),
+
+    // ── Nice : quartiers ───────────────────────────────────────────────────
+    ...NICE_SECTEURS.map((s) => ({
+      url: `${BASE_URL}/parcs/nice/${s}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.75,
     })),
 
-    // Articles blog
+    // ── Aix-en-Provence : secteurs ─────────────────────────────────────────
+    ...AIX_SECTEURS.map((s) => ({
+      url: `${BASE_URL}/parcs/aix/${s}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+
+    // ── Toulon : secteurs ──────────────────────────────────────────────────
+    ...TOULON_SECTEURS.map((s) => ({
+      url: `${BASE_URL}/parcs/toulon/${s}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+
+    // ── Pages thématiques ──────────────────────────────────────────────────
+    ...THEMES.map((theme) => ({
+      url: `${BASE_URL}/parcs/theme/${theme}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.80,
+    })),
+
+    // ── Articles blog ──────────────────────────────────────────────────────
     ...BLOG_SLUGS.map((slug) => ({
       url: `${BASE_URL}/blog/${slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
-      priority: 0.7,
+      priority: 0.72,
     })),
   ];
 }

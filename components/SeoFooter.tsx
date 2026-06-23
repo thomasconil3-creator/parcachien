@@ -28,6 +28,22 @@ const MARSEILLE_ARRONDISSEMENTS = [
   { code: "13016", label: "16ème — L'Estaque" },
 ];
 
+const DEPTS = [
+  { slug: "bouches-du-rhone", label: "Bouches-du-Rhône (13)" },
+  { slug: "var", label: "Var (83)" },
+  { slug: "alpes-maritimes", label: "Alpes-Maritimes (06)" },
+  { slug: "vaucluse", label: "Vaucluse (84)" },
+  { slug: "alpes-de-haute-provence", label: "Alpes-de-Haute-Provence (04)" },
+  { slug: "hautes-alpes", label: "Hautes-Alpes (05)" },
+];
+
+const THEMES = [
+  { slug: "clotured", label: "🔒 Espaces clôturés" },
+  { slug: "sans-laisse", label: "🐕 Chien sans laisse" },
+  { slug: "agility", label: "🏃 Agility" },
+  { slug: "gratuit", label: "✅ Gratuit" },
+];
+
 const BLOG_ARTICLES = [
   { slug: "top-10-parcs-chiens-marseille-2026", label: "Top 10 parcs à Marseille" },
   { slug: "preparer-premiere-visite-parc-canin", label: "Préparer la première visite" },
@@ -108,6 +124,34 @@ export default function SeoFooter() {
                   Voir tous les articles →
                 </a>
               </li>
+            </ul>
+          </div>
+
+          {/* Départements PACA */}
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#7C6EF5", marginBottom: 14 }}>
+              Par département
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {DEPTS.map(({ slug, label }) => (
+                <li key={slug} style={{ marginBottom: 8 }}>
+                  <a href={`/parcs/departement/${slug}`} style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#7C6EF5", marginBottom: 10, marginTop: 20 }}>
+              Par type
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {THEMES.map(({ slug, label }) => (
+                <li key={slug} style={{ marginBottom: 8 }}>
+                  <a href={`/parcs/theme/${slug}`} style={{ fontSize: 13, color: "#555", textDecoration: "none" }}>
+                    {label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
