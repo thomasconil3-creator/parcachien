@@ -97,7 +97,7 @@
     .progress-pct {
       font-size: 28px;
       font-weight: 800;
-      color: #7C6EF5;
+      color: #22C55E;
     }
     .progress-track {
       height: 10px;
@@ -107,19 +107,23 @@
     }
     .progress-fill {
       height: 100%;
-      width: 40%;
-      background: linear-gradient(90deg, #7C6EF5, #A78BFA);
+      width: 95%;
+      background: linear-gradient(90deg, #7C6EF5, #22C55E);
       border-radius: 10px;
-      transition: width 1s ease;
     }
     .progress-steps {
       display: flex;
       justify-content: space-between;
       margin-top: 12px;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     .progress-steps span {
       font-size: 11px;
-      color: #4A4760;
+      color: #22C55E;
+    }
+    .progress-steps span.pending {
+      color: #F59E0B;
     }
 
     /* SPLIT SECTION */
@@ -161,7 +165,7 @@
       flex-shrink: 0;
     }
     .col-icon.done { background: rgba(34, 197, 94, 0.15); }
-    .col-icon.todo { background: rgba(124, 110, 245, 0.15); }
+    .col-icon.after { background: rgba(124, 110, 245, 0.15); }
     .column-header h2 {
       font-size: 1.1rem;
       font-weight: 700;
@@ -197,13 +201,9 @@
       background: rgba(34, 197, 94, 0.12);
       color: #22C55E;
     }
-    .item-dot.todo {
+    .item-dot.new {
       background: rgba(124, 110, 245, 0.12);
       color: #7C6EF5;
-    }
-    .item-dot.urgent {
-      background: rgba(245, 158, 11, 0.12);
-      color: #F59E0B;
     }
     .item-text h4 {
       font-size: 14px;
@@ -231,8 +231,36 @@
     .item-tag.tech-tag { background: rgba(124,110,245,0.1); color: #A78BFA; }
     .item-tag.perf-tag { background: rgba(245,158,11,0.1); color: #F59E0B; }
 
-    /* NEXT STEPS */
-    .next-section { margin-top: 0; }
+    /* RÉSUMÉ STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      background: #16151F;
+      border: 1px solid #2A2738;
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: #7C6EF5;
+      display: block;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #6B6880;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* SECTION TITLE */
     .section-title {
       font-size: 12px;
       font-weight: 700;
@@ -240,71 +268,6 @@
       text-transform: uppercase;
       color: #7C6EF5;
       margin-bottom: 24px;
-    }
-    .roadmap {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
-    }
-    .roadmap::before {
-      content: '';
-      position: absolute;
-      left: 19px;
-      top: 20px;
-      bottom: 20px;
-      width: 2px;
-      background: linear-gradient(to bottom, #7C6EF5, #2A2738);
-    }
-    .roadmap-item {
-      display: flex;
-      gap: 20px;
-      padding: 0 0 32px;
-      position: relative;
-    }
-    .roadmap-num {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #16151F;
-      border: 2px solid #7C6EF5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 800;
-      color: #7C6EF5;
-      flex-shrink: 0;
-      z-index: 1;
-    }
-    .roadmap-card {
-      background: #16151F;
-      border: 1px solid #2A2738;
-      border-radius: 14px;
-      padding: 18px 22px;
-      flex: 1;
-    }
-    .roadmap-card h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .roadmap-card p {
-      font-size: 12px;
-      color: #6B6880;
-      line-height: 1.6;
-    }
-    .roadmap-card .cmd {
-      display: inline-block;
-      margin-top: 10px;
-      background: #0D0D12;
-      border: 1px solid #2A2738;
-      border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 11px;
-      color: #A78BFA;
-      font-family: 'Courier New', monospace;
     }
 
     /* FOOTER */
@@ -326,7 +289,7 @@
     <div class="hero-content">
       <div class="hero-badge">🐾 Rapport d'avancement</div>
       <h1>ParcAChien<br><span>Avant / Après</span></h1>
-      <p class="hero-sub">État de la plateforme suite à l'audit technique et la session de consolidation</p>
+      <p class="hero-sub">Session de travail du 23 juin 2026 — Ce qui existait vs ce qui a été ajouté</p>
       <p class="date-badge">Mis à jour le 23 juin 2026</p>
     </div>
   </div>
@@ -336,8 +299,8 @@
     <!-- PROGRESS BAR -->
     <div class="progress-section">
       <div class="progress-label">
-        <span>Progression globale</span>
-        <span class="progress-pct">40%</span>
+        <span>Progression avant lancement (28 juin)</span>
+        <span class="progress-pct">95%</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill"></div>
@@ -345,16 +308,38 @@
       <div class="progress-steps">
         <span>Branding ✓</span>
         <span>Carte ✓</span>
-        <span>Données ✓</span>
-        <span>Git ✓</span>
-        <span>SEO...</span>
-        <span>Clustering...</span>
-        <span>GitHub...</span>
-        <span>Blog...</span>
+        <span>Clustering ✓</span>
+        <span>Pages parcs ✓</span>
+        <span>Blog ✓</span>
+        <span>Sitemap ✓</span>
+        <span>GitHub ✓</span>
+        <span>Vercel ✓</span>
+        <span class="pending">Search Console ⏳</span>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-num">53</span>
+        <span class="stat-label">Pages générées</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">308+</span>
+        <span class="stat-label">Parcs indexés</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">8</span>
+        <span class="stat-label">Villes SEO</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">0</span>
+        <span class="stat-label">Erreurs build</span>
       </div>
     </div>
 
     <!-- AVANT / APRÈS -->
+    <p class="section-title" style="margin-bottom:24px">Ce qui existait vs ce qui a été ajouté</p>
     <div class="split">
 
       <!-- COLONNE AVANT -->
@@ -365,8 +350,8 @@
         <div class="column-header">
           <div class="col-icon done">✅</div>
           <div>
-            <h2>Ce qui a été fait</h2>
-            <p>Fondations solides en place</p>
+            <h2>Ce qui existait déjà</h2>
+            <p>Avant la session du 23 juin</p>
           </div>
         </div>
         <div class="column-body">
@@ -374,89 +359,89 @@
           <div class="item">
             <div class="item-dot done">🏷️</div>
             <div class="item-text">
-              <h4>Migration Branding</h4>
-              <p>Remplacement complet de "DogArea" par "ParcAChien" dans toute la base de code. package.json, store.ts, mascotte Uguette.</p>
-              <span class="item-tag done-tag">Terminé</span>
+              <h4>Branding ParcAChien</h4>
+              <p>Migration "DogArea" → "ParcAChien" déjà faite. package.json, store.ts, mascotte Uguette en place.</p>
+              <span class="item-tag done-tag">Existait</span>
             </div>
           </div>
 
           <div class="item">
             <div class="item-dot done">🗺️</div>
             <div class="item-text">
-              <h4>Refonte Carte Interactive</h4>
-              <p>Réécriture avec LayerGroup, mise à jour réactive des marqueurs, auto-zoom intelligent selon les filtres actifs.</p>
-              <span class="item-tag done-tag">Terminé</span>
+              <h4>Carte interactive</h4>
+              <p>Carte Leaflet avec marqueurs simples (LayerGroup). Fonctionnelle mais pins non groupés — illisible avec 300+ parcs.</p>
+              <span class="item-tag done-tag">Existait</span>
             </div>
           </div>
 
           <div class="item">
             <div class="item-dot done">📦</div>
             <div class="item-text">
-              <h4>Fusion Données Parcs</h4>
-              <p>Données locales fusionnées avec espaces_canins_paca.json (région PACA). Source unifiée dans lib/parks-data.ts.</p>
-              <span class="item-tag done-tag">Terminé</span>
+              <h4>Données parcs</h4>
+              <p>308+ parcs PACA dans lib/parks-data.ts. Source unique, données vérifiées depuis OpenStreetMap.</p>
+              <span class="item-tag done-tag">Existait</span>
             </div>
           </div>
 
           <div class="item">
-            <div class="item-dot done">🔧</div>
+            <div class="item-dot done">🌐</div>
             <div class="item-text">
-              <h4>Git Initialisé</h4>
-              <p>Repo local sur branche master avec historique de commits. Fondation prête pour connecter GitHub.</p>
-              <span class="item-tag done-tag">Terminé</span>
+              <h4>Site en ligne</h4>
+              <p>parcachien.com déjà déployé sur Vercel. Page d'accueil avec carte visible.</p>
+              <span class="item-tag done-tag">Existait</span>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- COLONNE APRÈS (À faire) -->
+      <!-- COLONNE APRÈS -->
       <div class="column">
         <img class="column-img"
           src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?w=800&q=80"
-          alt="À faire" />
+          alt="Après" />
         <div class="column-header">
-          <div class="col-icon todo">🚀</div>
+          <div class="col-icon after">🚀</div>
           <div>
-            <h2>Ce qu'il reste à faire</h2>
-            <p>4 chantiers pour passer en prod</p>
+            <h2>Ce qui a été ajouté</h2>
+            <p>Livré pendant la session du 23 juin</p>
           </div>
         </div>
         <div class="column-body">
 
           <div class="item">
-            <div class="item-dot urgent">🌐</div>
-            <div class="item-text">
-              <h4>Landing & Blog depuis le live</h4>
-              <p>Récupérer le contenu SEO du site en ligne (www.parcachien.com) — aucun /app/blog ni page parc en local.</p>
-              <span class="item-tag perf-tag">En cours</span>
-            </div>
-          </div>
-
-          <div class="item">
-            <div class="item-dot todo">📍</div>
+            <div class="item-dot new">📍</div>
             <div class="item-text">
               <h4>Clustering de marqueurs</h4>
-              <p>Intégrer leaflet.markercluster pour regrouper les pins sur zoom arrière. Carte illisible avec 100+ parcs.</p>
-              <span class="item-tag tech-tag">Technique</span>
+              <p>leaflet.markercluster intégré. Les 300+ pins se regroupent en bulles violettes au zoom arrière. Carte lisible à toutes les échelles.</p>
+              <span class="item-tag tech-tag">Nouveau</span>
             </div>
           </div>
 
           <div class="item">
-            <div class="item-dot todo">🔍</div>
+            <div class="item-dot new">🏙️</div>
             <div class="item-text">
-              <h4>SEO dynamique par parc</h4>
-              <p>Remplacer les meta statiques de layout.tsx par generateMetadata() pour chaque ville (Marseille, Nice, Toulon…).</p>
+              <h4>Pages SEO par ville</h4>
+              <p>/parcs/marseille, /parcs/nice, /parcs/toulon… 8 villes avec meta title/description custom + generateMetadata(). Index /parcs par département.</p>
               <span class="item-tag seo-tag">SEO</span>
             </div>
           </div>
 
           <div class="item">
-            <div class="item-dot todo">⚙️</div>
+            <div class="item-dot new">📝</div>
             <div class="item-text">
-              <h4>Pipeline GitHub + Vercel</h4>
-              <p>Aucun remote Git configuré. Créer le repo GitHub, lier Vercel pour des déploiements auto à chaque commit.</p>
-              <span class="item-tag tech-tag">DevOps</span>
+              <h4>Blog avec 3 articles</h4>
+              <p>/blog avec index + 3 articles complets : Top 10 Marseille, Préparer la première visite, Velox IA. generateStaticParams() pour SSG.</p>
+              <span class="item-tag seo-tag">SEO</span>
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="item-dot new">🔧</div>
+            <div class="item-text">
+              <h4>Infrastructure technique</h4>
+              <p>sitemap.xml (53 URLs), robots.txt, page 404 custom, SeoFooter avec liens internes, lib/utils.ts (cityToSlug), OG image dans layout.tsx, GitHub + Vercel CI/CD.</p>
+              <span class="item-tag tech-tag">Infra</span>
             </div>
           </div>
 
@@ -465,54 +450,24 @@
 
     </div>
 
-    <!-- ROADMAP NEXT STEPS -->
-    <div class="next-section">
-      <p class="section-title">Prochaines étapes recommandées</p>
-      <div class="roadmap">
-
-        <div class="roadmap-item">
-          <div class="roadmap-num">1</div>
-          <div class="roadmap-card">
-            <h3>Pipeline GitHub + Vercel</h3>
-            <p>Priorité absolue — c'est le socle de tout. Une fois le remote lié, chaque commit déclenche un déploiement automatique. Plus de `vercel --prod` à la main.</p>
-            <code class="cmd">git remote add origin https://github.com/[user]/parcachien.git</code>
-          </div>
-        </div>
-
-        <div class="roadmap-item">
-          <div class="roadmap-num">2</div>
-          <div class="roadmap-card">
-            <h3>SEO dynamique par parc</h3>
-            <p>Ajouter generateMetadata() dans app/parcs/[slug]/page.tsx avec titre, description et Open Graph par ville. Impact direct sur le trafic organique Google.</p>
-            <code class="cmd">app/parcs/[slug]/page.tsx</code>
-          </div>
-        </div>
-
-        <div class="roadmap-item">
-          <div class="roadmap-num">3</div>
-          <div class="roadmap-card">
-            <h3>Clustering carte</h3>
-            <p>npm install react-leaflet-markercluster. Wrapper les marqueurs dans un MarkerClusterGroup. La carte devient lisible dès le zoom national.</p>
-            <code class="cmd">npm install react-leaflet-cluster</code>
-          </div>
-        </div>
-
-        <div class="roadmap-item">
-          <div class="roadmap-num">4</div>
-          <div class="roadmap-card">
-            <h3>Récupération Blog / Landing live</h3>
-            <p>Fetch ou copie manuelle des pages existantes sur www.parcachien.com pour ne pas perdre le juice SEO accumulé. Créer /app/blog/ en local.</p>
-            <code class="cmd">app/blog/[slug]/page.tsx</code>
-          </div>
-        </div>
-
+    <!-- SEULE CHOSE RESTANTE -->
+    <p class="section-title">Seule action manuelle restante</p>
+    <div style="background:#16151F;border:1px solid #F59E0B33;border-radius:16px;padding:28px 32px;display:flex;gap:20px;align-items:flex-start;">
+      <div style="font-size:28px;flex-shrink:0;">⏳</div>
+      <div>
+        <h3 style="color:#F59E0B;font-size:16px;font-weight:700;margin-bottom:8px">Google Search Console — Soumettre le sitemap</h3>
+        <p style="color:#6B6880;font-size:13px;line-height:1.7">
+          Ouvrir <strong style="color:#A09BBF">search.google.com/search-console</strong> → sélectionner www.parcachien.com → Sitemaps → soumettre <strong style="color:#A78BFA">https://www.parcachien.com/sitemap.xml</strong><br>
+          <br>
+          Déléguer à Gemini dans Chrome (action nécessitant un vrai navigateur authentifié).
+        </p>
       </div>
     </div>
 
   </div>
 
   <footer>
-    ParcAChien &nbsp;·&nbsp; <span>parcachien.com</span> &nbsp;·&nbsp; Rapport généré le 23 juin 2026
+    ParcAChien &nbsp;·&nbsp; <span>parcachien.com</span> &nbsp;·&nbsp; Build 53 pages · 0 erreurs · Lancement 28 juin 2026
   </footer>
 
 </body>

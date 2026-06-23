@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DogProfile, CharacterTrait } from "@/lib/types";
 import { useStore } from "@/lib/store";
-import { X, PawPrint } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { saveDog, getMyDog } from "@/lib/db";
+import { X, PawPrint, Loader2 } from "lucide-react";
 
 const BREEDS = ["Labrador", "Golden Retriever", "Berger Allemand", "Beagle", "Bichon", "Bouledogue", "Caniche", "Chihuahua", "Cocker", "Dalmatien", "Doberman", "Husky", "Jack Russell", "Malinois", "Rottweiler", "Setter Irlandais", "Shih Tzu", "Spitz", "Yorkshire", "Autre"];
 
@@ -24,6 +26,9 @@ interface Props {
 
 export default function DogProfileModal({ onClose }: Props) {
   const { myDog, setMyDog } = useStore();
+  const supabase = createClient();
+  const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const [form, setForm] = useState<Omit<DogProfile, "id" | "ownerId">>({
     name: myDog?.name ?? "",
@@ -36,6 +41,19 @@ export default function DogProfileModal({ onClose }: Props) {
     vaccinated: myDog?.vaccinated ?? true,
   });
 
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      if (uid) {
+        const dog = await getMyDog(uid);
+        if (dog) {
+          setForm({ name: dog.name, breed: dog.breed, age: dog.age, weight: dog.weight, gender: dog.gender, sterilized: dog.sterilized, character: dog.character ?? [], vaccinated: dog.vaccinated });
+        }
+      }
+    });
+  }, []);
+
   const toggleTrait = (trait: CharacterTrait) => {
     setForm((f) => ({
       ...f,
@@ -45,12 +63,13 @@ export default function DogProfileModal({ onClose }: Props) {
     }));
   };
 
-  const save = () => {
-    setMyDog({
-      ...form,
-      id: myDog?.id ?? `dog-${Date.now()}`,
-      ownerId: "local-user",
-    });
+  const save = async () => {
+    setSaving(true);
+    // Sauvegarder en local (Zustand)
+    setMyDog({ ...form, id: myDog?.id ?? `dog-${Date.now()}`, ownerId: userId ?? "local-user" });
+    // Sauvegarder en base si connecté
+    if (userId) await saveDog(userId, form);
+    setSaving(false);
     onClose();
   };
 
@@ -187,9 +206,10 @@ export default function DogProfileModal({ onClose }: Props) {
         <div className="px-6 pb-6">
           <button
             onClick={save}
-            disabled={!form.name.trim()}
-            className="w-full bg-gradient-to-r from-[#F59500] to-[#FFAA2C] hover:from-amber-600 hover:to-amber-500 disabled:opacity-50 text-white py-3 rounded-2xl font-semibold transition-all shadow-md shadow-amber-200"
+            disabled={!form.name.trim() || saving}
+            className="w-full bg-gradient-to-r from-[#F59500] to-[#FFAA2C] hover:from-amber-600 hover:to-amber-500 disabled:opacity-50 text-white py-3 rounded-2xl font-semibold transition-all shadow-md shadow-amber-200 flex items-center justify-center gap-2"
           >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : null}
             Enregistrer le profil 🐾
           </button>
         </div>
