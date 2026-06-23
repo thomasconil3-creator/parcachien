@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { PACA_PARKS, Park } from "@/lib/parks-data";
 import ParkCard from "@/components/ParkCard";
@@ -13,7 +13,8 @@ import FeedPage from "@/components/FeedPage";
 import ForumPage from "@/components/ForumPage";
 import MessagesPage from "@/components/MessagesPage";
 import { useStore } from "@/lib/store";
-import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -45,6 +46,24 @@ export default function Home() {
   const [showStats, setShowStats] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyOnly, setNearbyOnly] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserEmail(session?.user?.email ?? null);
+      if (!session) setSection("map");
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const { myDog, addCheckin, getActiveCheckins, checkins, stats } = useStore();
   const totalCheckins = checkins.filter((c) => c.expiresAt > Date.now()).length;
@@ -164,18 +183,36 @@ export default function Home() {
           <PawPrint size={13} /> Parcs
         </a>
 
-        {/* Profile button */}
-        <button
-          onClick={() => setShowStats(true)}
-          className="relative p-2.5 rounded-2xl border border-[#E2DDD5] hover:border-amber-400 text-[#7D7269] hover:text-amber-500 transition-all"
-        >
-          <User size={15} />
-          {stats.badges.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-sm">
-              {stats.badges.length}
-            </span>
-          )}
-        </button>
+        {/* Auth button */}
+        {userEmail ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowStats(true)}
+              className="relative p-2.5 rounded-2xl border border-[#E2DDD5] hover:border-amber-400 text-[#7D7269] hover:text-amber-500 transition-all"
+            >
+              <User size={15} />
+              {stats.badges.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-sm">
+                  {stats.badges.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={handleLogout}
+              title="Se déconnecter"
+              className="p-2.5 rounded-2xl border border-[#E2DDD5] text-[#7D7269] hover:border-red-300 hover:text-red-400 transition-all hidden sm:flex"
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
+        ) : (
+          <a
+            href="/login"
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-bold rounded-2xl shadow-sm shadow-amber-200 hover:from-amber-500 hover:to-amber-600 transition-all"
+          >
+            <LogIn size={14} /> Connexion
+          </a>
+        )}
       </header>
 
       {/* ── FILTER BAR (collapsible) ── */}
@@ -247,8 +284,9 @@ export default function Home() {
 
       {/* ── BOTTOM NAV ── */}
       <nav className="relative z-[500] glass border-t border-white/40 flex pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
-        {NAV_TABS.map(({ id, icon: Icon, label }, i) => {
-          const isCenter = i === 0; // "Explorer" est le plus important
+        {/* Explorer tab — toujours visible */}
+        {NAV_TABS.filter((tab) => tab.id === "map" || !!userEmail).map(({ id, icon: Icon, label }, i) => {
+          const isCenter = id === "map";
           const active = section === id;
           return (
             <button
@@ -265,6 +303,18 @@ export default function Home() {
             </button>
           );
         })}
+        {/* Bouton rejoindre si non connecté */}
+        {!userEmail && (
+          <a
+            href="/login"
+            className="flex-1 py-3 flex flex-col items-center gap-1 group"
+          >
+            <div className="p-2 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 text-white shadow-lg shadow-violet-500/30">
+              <LogIn size={20} strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-violet-500">Rejoindre</span>
+          </a>
+        )}
       </nav>
 
       {/* ── MODALS ── */}
