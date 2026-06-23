@@ -13,6 +13,13 @@ const BLOG_SLUGS = [
   "trouver-parc-chien-pres-de-chez-moi-paca",
   "espaces-canins-nice-cote-azur",
   "regles-espaces-canins-marseille",
+  // Nouveaux articles v3
+  "espaces-canins-avignon-vaucluse",
+  "parcs-chiens-cannes-alpes-maritimes",
+  "balade-chien-calanques-marseille",
+  "choisir-croquettes-chien-conseils",
+  "parc-chien-avignon-villeneuve",
+  "veterinaire-urgence-chien-paca",
 ];
 
 const MARSEILLE_ARRONDISSEMENTS = [
@@ -34,6 +41,14 @@ const AIX_SECTEURS = [
 const TOULON_SECTEURS = [
   "centre", "pont-du-las", "mourillon",
   "parc-raoulx", "parc-lices", "la-valette",
+];
+
+const AVIGNON_SECTEURS = [
+  "intra-muros", "saint-chamand", "monclar", "les-angles", "montfavet",
+];
+
+const CANNES_SECTEURS = [
+  "centre-croisette", "la-bocca", "le-cannet", "mandelieu", "mougins",
 ];
 
 const DEPTS = [
@@ -100,6 +115,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Toulon : secteurs ──────────────────────────────────────────────────
     ...TOULON_SECTEURS.map((s) => ({
       url: `${BASE_URL}/parcs/toulon/${s}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+
+    // ── Avignon : secteurs ─────────────────────────────────────────────────
+    ...AVIGNON_SECTEURS.map((s) => ({
+      url: `${BASE_URL}/parcs/avignon/${s}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+
+    // ── Cannes : secteurs ──────────────────────────────────────────────────
+    ...CANNES_SECTEURS.map((s) => ({
+      url: `${BASE_URL}/parcs/cannes/${s}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.75,
