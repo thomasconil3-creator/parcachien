@@ -173,3 +173,33 @@ create index if not exists feed_posts_created_at on feed_posts(created_at desc);
 create index if not exists forum_threads_created_at on forum_threads(created_at desc);
 create index if not exists messages_receiver_id on messages(receiver_id);
 create index if not exists stories_expires_at on stories(expires_at);
+
+-- ALERTS (DANGERS)
+create table if not exists alerts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  park_id text not null,
+  danger_type text check (danger_type in ('chenilles', 'verre', 'cyanobacteries', 'epillets', 'autre')),
+  description text not null,
+  expires_at timestamptz not null,
+  created_at timestamptz default now()
+);
+alter table alerts enable row level security;
+create policy "Lecture publique des alertes" on alerts for select using (expires_at > now());
+create policy "Insertion par l'utilisateur" on alerts for insert with check (auth.uid() = user_id);
+
+create index if not exists alerts_park_id on alerts(park_id);
+create index if not exists alerts_expires_at on alerts(expires_at);
+
+-- AMENITIES (Points d'eau, Poubelles, Distributeurs)
+create table if not exists amenities (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users not null,
+  type text check (type in ('water', 'trash', 'dispenser')),
+  lat float not null,
+  lng float not null,
+  created_at timestamptz default now()
+);
+alter table amenities enable row level security;
+create policy "Lecture publique des commodites" on amenities for select using (true);
+create policy "Insertion par l'utilisateur" on amenities for insert with check (auth.uid() = user_id);

@@ -15,7 +15,7 @@ import MessagesPage from "@/components/MessagesPage";
 import { useStore } from "@/lib/store";
 import { createClient } from "@/utils/supabase/client";
 import { getActiveCheckins, addCheckin, getMyDog } from "@/lib/db";
-import { Search, MapIcon, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut } from "lucide-react";
+import { Search, MapIcon, MapPin, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut, Database, Briefcase } from "lucide-react";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -42,6 +42,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [showShops, setShowShops] = useState(true);
   const [selectedPark, setSelectedPark] = useState<Park | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -122,6 +123,7 @@ export default function Home() {
 
   const filteredParks = useMemo(() => {
     let parks = PACA_PARKS.filter((p) => {
+      if (!showShops && (p.type === 'shop' || p.type === 'vet')) return false;
       const q = search.toLowerCase();
       const match = p.name.toLowerCase().includes(q) || p.city.toLowerCase().includes(q);
       const matchDept = dept === "" || p.department === dept;
@@ -203,6 +205,15 @@ export default function Home() {
           <SlidersHorizontal size={15} />
         </button>
 
+        {/* Pro Filter Toggle */}
+        <button
+          onClick={() => setShowShops(!showShops)}
+          title="Afficher/Masquer les Pros"
+          className={`p-2.5 rounded-2xl border transition-all ${showShops ? "bg-emerald-500 border-emerald-500 text-white shadow-sm" : "border-[#E2DDD5] text-[#7D7269] hover:border-emerald-400 hover:text-emerald-500"}`}
+        >
+          <Briefcase size={15} />
+        </button>
+
         {/* Map/List toggle */}
         <div className="flex bg-[#F2EFE9] rounded-2xl p-1">
           {([{ v: "map", Icon: MapIcon, label: "Carte" }, { v: "list", Icon: List, label: "Liste" }] as const).map(({ v, Icon, label }) => (
@@ -237,6 +248,15 @@ export default function Home() {
         {/* Auth button */}
         {userEmail ? (
           <div className="flex items-center gap-2">
+            {["ceo@velox-ia.com", "thomasconil3@gmail.com", "ceo@parcachien.com"].includes(userEmail?.toLowerCase() || "") && (
+              <a
+                href="/admin"
+                title="Administration"
+                className="p-2.5 rounded-2xl bg-amber-100 text-amber-700 hover:bg-amber-200 transition-all flex items-center gap-1.5 text-xs font-bold"
+              >
+                <Database size={15} /> Admin
+              </a>
+            )}
             <button
               onClick={() => setShowStats(true)}
               className="relative p-2.5 rounded-2xl border border-[#E2DDD5] hover:border-amber-400 text-[#7D7269] hover:text-amber-500 transition-all"
@@ -293,15 +313,46 @@ export default function Home() {
       <StoriesBanner onParkSelect={handleParkFromStory} />
 
       {/* ── MAIN ── */}
-      <main className="flex-1 min-h-0 overflow-hidden flex">
-        {section === "feed" && <FeedPage />}
-        {section === "forum" && <ForumPage />}
-        {section === "messages" && <MessagesPage />}
+      <main className="flex-1 min-h-0 overflow-hidden flex justify-center bg-[#F2EFE9] w-full">
+        {section === "feed" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><FeedPage /></div>}
+        {section === "forum" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><ForumPage /></div>}
+        {section === "messages" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><MessagesPage /></div>}
         {section === "map" && (
           view === "map" ? (
-            <div className="flex flex-1 min-h-0 overflow-hidden">
+            <div className="flex flex-1 min-h-0 overflow-hidden w-full max-w-2xl mx-auto border-x border-gray-200 shadow-xl relative bg-white">
               <div className="flex-1 relative min-h-0">
                 <Map parks={filteredParks} onParkSelect={setSelectedPark} checkins={checkins} />
+                
+                {/* Bannière B2B pour référencement pro */}
+                <a href="/admin" className="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl p-3 shadow-lg z-[400] flex items-center gap-3 hover:scale-[1.02] transition-transform">
+                   <div className="bg-white/20 p-2 rounded-xl"><Briefcase size={20} /></div>
+                   <div className="flex-1">
+                     <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Pour les Professionnels</p>
+                     <p className="text-xs font-semibold leading-tight mt-0.5">Vétérinaire, Boutique ? Référencez-vous sur la carte !</p>
+                   </div>
+                </a>
+                
+                {/* Bannière d'explication pour les non-inscrits */}
+                {!userEmail && !selectedPark && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg bg-white/95 backdrop-blur-md rounded-3xl p-5 shadow-2xl border border-white/60 z-[400] flex flex-col gap-3">
+                    <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                      <PawPrint size={18} className="text-amber-500" />
+                      Rejoignez la meute !
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      L'application Web & Mobile <strong>ParcAChien</strong> vous permet de faire bien plus que consulter la carte :
+                    </p>
+                    <ul className="text-xs font-medium text-gray-700 grid grid-cols-2 gap-2 mt-1">
+                      <li className="flex items-center gap-1.5"><MapPin size={14} className="text-emerald-500"/> Check-ins en direct</li>
+                      <li className="flex items-center gap-1.5"><MessageSquare size={14} className="text-blue-500"/> Forum d'entraide</li>
+                      <li className="flex items-center gap-1.5"><MessageCircle size={14} className="text-violet-500"/> Messagerie privée</li>
+                      <li className="flex items-center gap-1.5"><User size={14} className="text-amber-500"/> Carnet de santé</li>
+                    </ul>
+                    <a href="/login" className="mt-2 w-full py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-bold rounded-xl shadow-md text-center hover:from-amber-500 hover:to-amber-600 transition-all">
+                      Créer mon compte gratuit
+                    </a>
+                  </div>
+                )}
               </div>
               {selectedPark && (
                 <ParkPanel

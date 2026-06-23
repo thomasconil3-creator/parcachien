@@ -15,11 +15,16 @@ ALTER TABLE partners ADD COLUMN IF NOT EXISTS specialite TEXT;
 ALTER TABLE partners ADD COLUMN IF NOT EXISTS verified BOOLEAN DEFAULT false;
 
 -- Politique : le propriétaire peut modifier sa fiche
-CREATE POLICY IF NOT EXISTS "Modification par le propriétaire" ON partners
+DROP POLICY IF EXISTS "Modification par le propriétaire" ON partners;
+CREATE POLICY "Modification par le propriétaire" ON partners
   FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS "Suppression par le propriétaire" ON partners
+
+DROP POLICY IF EXISTS "Suppression par le propriétaire" ON partners;
+CREATE POLICY "Suppression par le propriétaire" ON partners
   FOR DELETE USING (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS "Insertion par l'utilisateur" ON partners
+
+DROP POLICY IF EXISTS "Insertion par l'utilisateur" ON partners;
+CREATE POLICY "Insertion par l'utilisateur" ON partners
   FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- ── FORUM REPORTS (Signalements de contenu) ─────────────────
@@ -34,8 +39,11 @@ CREATE TABLE IF NOT EXISTS forum_reports (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE forum_reports ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Signalement par l'utilisateur connecté" ON forum_reports;
 CREATE POLICY "Signalement par l'utilisateur connecté" ON forum_reports
   FOR INSERT WITH CHECK (auth.uid() = reporter_id);
+
+DROP POLICY IF EXISTS "Lecture de ses propres signalements" ON forum_reports;
 CREATE POLICY "Lecture de ses propres signalements" ON forum_reports
   FOR SELECT USING (auth.uid() = reporter_id);
 CREATE INDEX IF NOT EXISTS forum_reports_status ON forum_reports(status, created_at DESC);
@@ -58,6 +66,7 @@ CREATE TABLE IF NOT EXISTS partner_requests (
 -- Table admin uniquement, pas de RLS public
 ALTER TABLE partner_requests ENABLE ROW LEVEL SECURITY;
 -- Insertion publique (formulaire de contact sans compte)
+DROP POLICY IF EXISTS "Insertion publique demande partenaire" ON partner_requests;
 CREATE POLICY "Insertion publique demande partenaire" ON partner_requests
   FOR INSERT WITH CHECK (true);
 

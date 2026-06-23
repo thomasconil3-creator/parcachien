@@ -12,6 +12,11 @@ export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [dob, setDob] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -32,11 +37,29 @@ export default function LoginPage() {
         router.refresh();
       }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            username: username,
+            dob: dob,
+            postal_code: postalCode
+          }
+        }
+      });
       if (error) {
         setError("Impossible de créer le compte : " + error.message);
       } else {
         setSuccess("Compte créé ! Vérifie ton email pour confirmer ton inscription.");
+        // Déclenchement de l'email de bienvenue via Resend
+        fetch('/api/emails/welcome', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, firstName })
+        }).catch(console.error);
       }
     }
 
@@ -85,6 +108,17 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+            {/* Extra fields for Register */}
+            {mode === "register" && (
+              <div className="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50 text-gray-800 placeholder-gray-400" />
+                <input type="text" placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50 text-gray-800 placeholder-gray-400" />
+                <input type="text" placeholder="Pseudo (@unique)" value={username} onChange={(e) => setUsername(e.target.value)} required className="col-span-2 w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50 text-gray-800 placeholder-gray-400" />
+                <input type="date" placeholder="Date de naissance" value={dob} onChange={(e) => setDob(e.target.value)} required className="w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50 text-gray-800 placeholder-gray-400" />
+                <input type="text" placeholder="Code Postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} required className="w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50 text-gray-800 placeholder-gray-400" />
+              </div>
+            )}
 
             {/* Email */}
             <div className="relative">

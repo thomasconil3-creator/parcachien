@@ -103,9 +103,14 @@ export default function Map({ parks, onParkSelect, checkins = [] }: MapProps) {
       const count = activeParkCheckins.length;
       const dotColor = count === 0 ? "#9CA3AF" : count <= 2 ? "#22C55E" : count <= 5 ? "#EAB308" : "#EF4444";
 
+      const isVet = park.type === 'vet';
+      const isShop = park.type === 'shop';
+      const iconText = isVet ? '⚕️' : isShop ? '🛍️' : '🐾';
+      const bg = isVet ? '#10B981' : isShop ? '#F59E0B' : '#7C6EF5';
+
       const icon = L.divIcon({
         html: `<div style="position:relative;width:36px;height:36px;cursor:pointer;">
-          <div style="background:#7C6EF5;width:36px;height:36px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(124,110,245,0.4);display:flex;align-items:center;justify-content:center;font-size:15px;transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">🐾</div>
+          <div style="background:${bg};width:36px;height:36px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;font-size:15px;transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">${iconText}</div>
           ${count > 0 ? `<div style="position:absolute;top:-4px;right:-4px;background:${dotColor};color:white;width:18px;height:18px;border-radius:50%;border:2px solid white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.2);">${count}</div>` : ""}
         </div>`,
         className: "",

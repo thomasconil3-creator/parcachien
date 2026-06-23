@@ -223,3 +223,173 @@ export async function addStory(userId: string, story: {
 export async function likeStory(storyId: string, currentLikes: number) {
   await db().from("stories").update({ likes: currentLikes + 1 }).eq("id", storyId);
 }
+
+// ─── PARK REVIEWS ─────────────────────────────────────────────────────────────
+
+export async function getParkReviews(parkId: string) {
+  const { data } = await db()
+    .from("park_reviews")
+    .select("*")
+    .eq("park_id", parkId)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  const reviews = data ?? [];
+  const avg = reviews.length
+    ? reviews.reduce((sum: number, r: any) => sum + (r.rating ?? 0), 0) / reviews.length
+    : null;
+  return { reviews, avgRating: avg };
+}
+
+export async function addParkReview(userId: string, review: {
+  park_id: string; park_name: string; rating: number;
+  cleanliness?: number; safety?: number; shade?: number; text?: string;
+}) {
+  const { data } = await db().from("park_reviews").insert({
+    user_id: userId,
+    ...review,
+  }).select().single();
+  return data;
+}
+
+// ─── EVENTS ────────────────────────────────────────────────────────────────────
+
+export async function getEvents(filter?: 'week' | 'weekend') {
+  const now = new Date();
+  let query = db()
+    .from("events")
+    .select("*, event_participants(*)")
+    .gt("event_date", now.toISOString());
+
+  if (filter === 'week') {
+    const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    query = query.lt("event_date", nextWeek.toISOString());
+  } else if (filter === 'weekend') {
+    // Next Saturday
+    const day = now.getDay(); // 0=Sun,6=Sat
+    const daysToSat = (6 - day + 7) % 7 || 7;
+    const sat = new Date(now);
+    sat.setDate(now.getDate() + daysToSat);
+    sat.setHours(0, 0, 0, 0);
+    const sun = new Date(sat);
+    sun.setDate(sat.getDate() + 1);
+    sun.setHours(23, 59, 59, 999);
+    query = query.gte("event_date", sat.toISOString()).lte("event_date", sun.toISOString());
+  }
+
+  const { data } = await query.order("event_date", { ascending: true });
+  return data ?? [];
+}
+
+export async function addEvent(userId: string, event: {
+  title: string; description?: string; event_type: string;
+  park_id?: string; park_name?: string; city: string;
+  lat?: number; lng?: number; event_date: string;
+  max_participants?: number; organizer_dog_name: string; organizer_breed?: string;
+}) {
+  const { data } = await db().from("events").insert({
+    user_id: userId,
+    ...event,
+  }).select().single();
+  return data;
+}
+
+export async function joinEvent(eventId: string, userId: string, dogName: string) {
+  const { data } = await db().from("event_participants").insert({
+    event_id: eventId,
+    user_id: userId,
+    dog_name: dogName,
+  }).select().single();
+  return data;
+}
+
+export async function leaveEvent(eventId: string, userId: string) {
+  await db().from("event_participants")
+    .delete()
+    .eq("event_id", eventId)
+    .eq("user_id", userId);
+}
+
+// ─── LOST DOGS ────────────────────────────────────────────────────────────────
+
+export async function getLostDogs() {
+  const { data } = await db()
+    .from("lost_dogs")
+    .select("*")
+    .eq("status", "lost")
+    .eq("resolved", false)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function reportLostDog(userId: string, dog: {
+  dog_name: string; breed?: string; photo?: string;
+  description: string; last_seen_lat: number; last_seen_lng: number;
+  last_seen_city: string; contact_phone?: string;
+}) {
+  const { data } = await db().from("lost_dogs").insert({
+    user_id: userId,
+    ...dog,
+    status: "lost",
+    resolved: false,
+    last_seen_at: new Date().toISOString(),
+  }).select().single();
+  return data;
+}
+
+export async function markDogFound(lostDogId: string) {
+  await db().from("lost_dogs").update({ resolved: true }).eq("id", lostDogId);
+}
+
+// ─── HEALTH RECORDS ───────────────────────────────────────────────────────────
+
+export async function getHealthRecords(userId: string, dogId?: string) {
+  let query = db()
+    .from("health_records")
+    .select("*")
+    .eq("user_id", userId);
+  if (dogId) query = query.eq("dog_id", dogId);
+  const { data } = await query.order("date_done", { ascending: false });
+  return data ?? [];
+}
+
+export async function addHealthRecord(userId: string, record: {
+  dog_id?: string; record_type: string; title: string;
+  notes?: string; date_done?: string; reminder_at?: string; vet_name?: string;
+}) {
+  const { data } = await db().from("health_records").insert({
+    user_id: userId,
+    ...record,
+  }).select().single();
+  return data;
+}
+
+export async function deleteHealthRecord(recordId: string) {
+  await db().from("health_records").delete().eq("id", recordId);
+}
+
+// ─── MEETUP INVITES ───────────────────────────────────────────────────────────
+
+export async function getMeetupInvites(userId: string) {
+  const { data } = await db()
+    .from("meetup_invites")
+    .select("*")
+    .eq("to_user_id", userId)
+    .eq("status", "pending");
+  return data ?? [];
+}
+
+export async function sendMeetupInvite(fromUserId: string, invite: {
+  to_user_id: string; park_id: string; park_name: string;
+  scheduled_at: string; message?: string;
+}) {
+  const { data } = await db().from("meetup_invites").insert({
+    from_user_id: fromUserId,
+    ...invite,
+    status: "pending",
+  }).select().single();
+  return data;
+}
+
+export async function respondToMeetup(meetupId: string, status: 'accepted' | 'declined') {
+  await db().from("meetup_invites").update({ status }).eq("id", meetupId);
+}

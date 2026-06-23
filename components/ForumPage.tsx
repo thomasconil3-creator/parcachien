@@ -174,7 +174,13 @@ export default function ForumPage() {
       <div className="glass border-b border-white/40 px-4 py-4 flex items-center justify-between flex-shrink-0 shadow-sm z-10">
         <div>
           <h2 className="font-display font-800 text-[#242019] text-lg tracking-tight">Forum</h2>
-          <p className="text-[11px] uppercase tracking-wider font-bold text-amber-600">{filtered.length} sujets</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-[11px] uppercase tracking-wider font-bold text-amber-600">{filtered.length} sujets</p>
+            <a href="https://www.reddit.com/r/chiens/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 bg-[#FF4500] text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .883.175 1.188.465 1.2-.843 2.83-1.4 4.615-1.48l.86-4.008a.326.326 0 0 1 .387-.246l3.14.661a1.248 1.248 0 0 1 1.038-.902zm-9.176 9.47c-.895 0-1.62.724-1.62 1.62 0 .894.725 1.62 1.62 1.62.894 0 1.62-.726 1.62-1.62 0-.896-.726-1.62-1.62-1.62zm8.332 0c-.894 0-1.62.724-1.62 1.62 0 .894.726 1.62 1.62 1.62.895 0 1.62-.726 1.62-1.62 0-.896-.725-1.62-1.62-1.62zm-4.166 3.864c-1.393 0-2.434-.418-2.5-.443-.16-.06-.24-.234-.18-.395.06-.16.234-.24.395-.18.02.008.92.38 2.285.38 1.385 0 2.29-.378 2.31-.387.16-.063.336.015.4.175.062.16-.016.335-.175.397-.07.026-1.12.453-2.535.453z"/></svg>
+              Partenaire r/chiens
+            </a>
+          </div>
         </div>
         {userId && (
           <button onClick={() => setShowNew(true)}

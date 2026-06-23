@@ -5,6 +5,7 @@ export interface Park {
   department: string;
   lat: number;
   lng: number;
+  type?: 'park' | 'vet' | 'shop';
   address?: string;
   fenced?: boolean;
   opening_hours?: string;
@@ -48,6 +49,11 @@ const HARDCODED_PARKS: Park[] = [
   { id: "13-010", name: "Espace canin Saint-Tronc", city: "Marseille", department: "13", lat: 43.2683, lng: 5.4174, address: "Boulevard Paul Claudel" },
   { id: "13-011", name: "Espace canin Le Cabot", city: "Marseille", department: "13", lat: 43.2500, lng: 5.4180 },
   { id: "13-012", name: "Espace canin Mazargues", city: "Marseille", department: "13", lat: 43.2467, lng: 5.3981 },
+  
+  // Nouveaux ajouts professionnels B2B
+  { id: "13-vet-1", name: "Clinique Vétérinaire du Prado", city: "Marseille", department: "13", lat: 43.2750, lng: 5.3850, type: "vet", address: "Avenue du Prado", phone: "04 91 00 00 00" },
+  { id: "13-shop-1", name: "Animalerie Canin Select", city: "Marseille", department: "13", lat: 43.2950, lng: 5.3750, type: "shop", address: "Vieux Port", phone: "04 91 11 11 11" },
+
   // Marseille — nouveaux parcs (non encore sur OSM ou récemment ajoutés)
   { id: "13-020", name: "Espace canin Roucas-Blanc", city: "Marseille", department: "13", lat: 43.2824, lng: 5.3700, address: "Rue du Bois Sacré", fenced: false },
   { id: "13-021", name: "Espace canin Saint-Menet", city: "Marseille", department: "13", lat: 43.2929, lng: 5.4942, address: "Montée de Saint-Menet" },
