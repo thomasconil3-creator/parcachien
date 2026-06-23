@@ -59,12 +59,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
       title: meta.title,
       description: meta.description,
+      alternates: { canonical: `https://www.parcachien.com/parcs/${slug}` },
       openGraph: {
         title: meta.title,
         description: meta.description,
         siteName: "ParcAChien",
         locale: "fr_FR",
         type: "website",
+        url: `https://www.parcachien.com/parcs/${slug}`,
       },
       twitter: {
         card: "summary_large_image",
@@ -73,7 +75,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
     };
   }
-  // Fallback for cities without custom meta
   const city = slug
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -81,6 +82,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `Parcs à chiens à ${city} — ParcAChien`,
     description: `Trouvez tous les espaces canins à ${city} en région PACA. Carte interactive, check-in live et communauté sur ParcAChien.`,
+    alternates: { canonical: `https://www.parcachien.com/parcs/${slug}` },
     openGraph: {
       title: `Parcs à chiens à ${city} — ParcAChien`,
       description: `Tous les parcs à chiens à ${city} — ParcAChien`,
@@ -100,8 +102,84 @@ export default async function ParcsCityPage({ params }: { params: Promise<{ slug
   const cityName = parks[0].city;
   const fencedCount = parks.filter((p) => p.fenced).length;
 
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `https://www.parcachien.com/parcs/${slug}`,
+        "url": `https://www.parcachien.com/parcs/${slug}`,
+        "name": `Parcs à chiens à ${cityName} — ParcAChien`,
+        "description": `${parks.length} espaces canins recensés à ${cityName} en PACA. Carte interactive, check-in live.`,
+        "inLanguage": "fr-FR",
+        "isPartOf": { "@id": "https://www.parcachien.com" },
+      },
+      {
+        "@type": "ItemList",
+        "name": `Espaces canins à ${cityName}`,
+        "numberOfItems": parks.length,
+        "itemListElement": parks.map((park, i) => ({
+          "@type": "ListItem",
+          "position": i + 1,
+          "item": {
+            "@type": "Park",
+            "name": park.name,
+            "address": park.address
+              ? {
+                  "@type": "PostalAddress",
+                  "streetAddress": park.address,
+                  "addressLocality": park.city,
+                  "addressCountry": "FR",
+                }
+              : undefined,
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": park.lat,
+              "longitude": park.lng,
+            },
+            ...(park.fenced ? { "amenityFeature": [{ "@type": "LocationFeatureSpecification", "name": "Clôturé", "value": true }] } : {}),
+          },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ParcAChien", "item": "https://www.parcachien.com" },
+          { "@type": "ListItem", "position": 2, "name": "Parcs", "item": "https://www.parcachien.com/parcs" },
+          { "@type": "ListItem", "position": 3, "name": `Parcs à chiens à ${cityName}`, "item": `https://www.parcachien.com/parcs/${slug}` },
+        ],
+      },
+    ],
+  };
+
+  // Arrondissement links for Marseille
+  const MARSEILLE_ARRONDISSEMENTS = [
+    { code: "13001", label: "1er — Vieux-Port" },
+    { code: "13002", label: "2ème — Joliette" },
+    { code: "13003", label: "3ème — Belle de Mai" },
+    { code: "13004", label: "4ème — Cinq-Avenues" },
+    { code: "13005", label: "5ème — Baille" },
+    { code: "13006", label: "6ème — Vauban" },
+    { code: "13007", label: "7ème — Roucas-Blanc" },
+    { code: "13008", label: "8ème — Périer" },
+    { code: "13009", label: "9ème — Mazargues" },
+    { code: "13010", label: "10ème — La Capelette" },
+    { code: "13011", label: "11ème — La Valbarelle" },
+    { code: "13012", label: "12ème — Saint-Barnabé" },
+    { code: "13013", label: "13ème — Les Olives" },
+    { code: "13014", label: "14ème — Les Crottes" },
+    { code: "13015", label: "15ème — Saint-Lazare" },
+    { code: "13016", label: "16ème — L'Estaque" },
+  ];
+
   return (
     <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <nav style={{ marginBottom: 24, fontSize: 13, color: "#888" }}>
         <a href="/" style={{ color: "#7C6EF5", textDecoration: "none" }}>ParcAChien</a>
         {" › "}
@@ -117,6 +195,36 @@ export default async function ParcsCityPage({ params }: { params: Promise<{ slug
         {parks.length} espace{parks.length > 1 ? "s" : ""} canin{parks.length > 1 ? "s" : ""} recensé{parks.length > 1 ? "s" : ""} —
         dont {fencedCount} clôturé{fencedCount > 1 ? "s" : ""}. Données vérifiées, mises à jour régulièrement.
       </p>
+
+      {/* Marseille arrondissement nav */}
+      {slug === "marseille" && (
+        <div style={{ background: "#f0eeff", borderRadius: 16, padding: "20px 24px", marginBottom: 40 }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#7C6EF5", marginBottom: 14, textTransform: "uppercase", letterSpacing: 1 }}>
+            🏙️ Chercher par arrondissement à Marseille
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {MARSEILLE_ARRONDISSEMENTS.map(({ code, label }) => (
+              <a
+                key={code}
+                href={`/parcs/marseille/${code}`}
+                style={{
+                  display: "inline-block",
+                  background: "#fff",
+                  border: "1px solid #e0d9ff",
+                  borderRadius: 20,
+                  padding: "6px 14px",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "#7C6EF5",
+                  textDecoration: "none",
+                }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "grid", gap: 16 }}>
         {parks.map((park) => (
@@ -182,6 +290,35 @@ export default async function ParcsCityPage({ params }: { params: Promise<{ slug
             )}
           </div>
         ))}
+      </div>
+
+      {/* FAQ block for SEO */}
+      <div style={{ marginTop: 48, background: "#fafafa", borderRadius: 16, padding: "32px 28px", border: "1px solid #f0eeff" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 800, color: "#1a1a2e", marginBottom: 20 }}>Questions fréquentes</h2>
+        <div style={{ marginBottom: 16 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1a1a2e", marginBottom: 6 }}>
+            Combien y a-t-il d'espaces canins à {cityName} ?
+          </h3>
+          <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7 }}>
+            ParcAChien recense <strong>{parks.length} espaces canins</strong> à {cityName}, dont {fencedCount} clôturé{fencedCount > 1 ? "s" : ""}. Ces données sont issues d'OpenStreetMap et de sources officielles, mises à jour régulièrement.
+          </p>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1a1a2e", marginBottom: 6 }}>
+            Comment trouver un parc à chien près de chez moi à {cityName} ?
+          </h3>
+          <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7 }}>
+            Utilisez la <a href="/" style={{ color: "#7C6EF5" }}>carte interactive ParcAChien</a> et activez la géolocalisation pour voir les espaces canins les plus proches de votre position. Vous pouvez également filtrer par arrondissement ou quartier.
+          </p>
+        </div>
+        <div>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1a1a2e", marginBottom: 6 }}>
+            Peut-on laisser son chien sans laisse à {cityName} ?
+          </h3>
+          <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7 }}>
+            Oui, dans les espaces canins clôturés, votre chien peut évoluer librement sans laisse. Les espaces marqués "sans laisse" sur ParcAChien sont des zones dédiées et sécurisées.
+          </p>
+        </div>
       </div>
 
       <div style={{ marginTop: 48, textAlign: "center" }}>
