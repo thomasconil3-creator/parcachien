@@ -51,6 +51,7 @@ export default function Home() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [checkins, setCheckins] = useState<any[]>([]);
+  const [partners, setPartners] = useState<Park[]>([]);
   const [dbMyDog, setDbMyDog] = useState<any>(null);
 
   const supabase = createClient();
@@ -68,6 +69,19 @@ export default function Home() {
         timestamp: new Date(c.created_at).getTime(),
         expiresAt: new Date(c.expires_at).getTime(),
       })));
+
+      const { data: partnersData } = await supabase.from('partners').select('*');
+      if (partnersData) {
+        setPartners(partnersData.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          city: p.city,
+          department: p.department || "",
+          lat: p.lat,
+          lng: p.lng,
+          type: p.category === 'boutique' ? 'shop' : 'vet'
+        })));
+      }
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +136,8 @@ export default function Home() {
   }, [userLocation]);
 
   const filteredParks = useMemo(() => {
-    let parks = PACA_PARKS.filter((p) => {
+    let allParks = [...PACA_PARKS, ...partners];
+    let parks = allParks.filter((p) => {
       if (!showShops && (p.type === 'shop' || p.type === 'vet')) return false;
       const q = search.toLowerCase();
       const match = p.name.toLowerCase().includes(q) || p.city.toLowerCase().includes(q);

@@ -29,6 +29,23 @@ export async function POST(request: Request) {
       `,
     });
 
+    // Envoi de la notification à l'administrateur
+    await resend.emails.send({
+      from: 'ParcAChien Admin <bonjour@parcachien.com>',
+      to: ['ceo@velox-ia.com'],
+      subject: '🚀 Nouvel utilisateur inscrit sur ParcAChien !',
+      html: `
+        <div style="font-family: sans-serif;">
+          <h2>Nouvelle inscription 🎉</h2>
+          <p>Un nouvel utilisateur vient de s'inscrire sur ParcAChien.</p>
+          <ul>
+            <li><strong>Prénom :</strong> ${firstName || 'Non renseigné'}</li>
+            <li><strong>Email :</strong> ${email}</li>
+          </ul>
+        </div>
+      `,
+    });
+
     if (error) {
       return NextResponse.json({ error }, { status: 400 });
     }

@@ -9,6 +9,8 @@ const ARTICLES: Record<string, {
   readTime: string;
   category: string;
   content: string;
+  keywords?: string[];
+  image?: string;
 }> = {
   "top-10-parcs-chiens-marseille-2026": {
     title: "Top 10 des parcs à chiens à Marseille en 2026",
