@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Users, Dog, MapPin, AlertTriangle, Briefcase, Activity, Database, Mail, Zap, Play, Download, Search } from "lucide-react";
+import { Users, Dog, MapPin, AlertTriangle, Briefcase, Activity, Database, Mail, Zap, Play, Download, Search, RefreshCw, Info, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
@@ -21,6 +21,8 @@ export default function AdminDashboard() {
   const [lostDogs, setLostDogs] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [crmSearch, setCrmSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [resendingEmail, setResendingEmail] = useState<string | null>(null);
 
   useEffect(() => {
     checkAdmin();
@@ -65,6 +67,54 @@ export default function AdminDashboard() {
       console.error("Erreur chargement admin:", error);
     }
     setLoading(false);
+  }
+
+  async function handleResendWelcome(email: string, firstName: string) {
+    if (resendingEmail) return;
+    setResendingEmail(email);
+    try {
+      const res = await fetch('/api/emails/welcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, firstName: firstName || "l'ami" })
+      });
+      if (res.ok) {
+        alert(`Email de bienvenue renvoyé avec succès à ${email} !`);
+      } else {
+        alert("Erreur lors du renvoi de l'email.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors du renvoi de l'email.");
+    } finally {
+      setResendingEmail(null);
+    }
+  }
+
+  async function handleDeleteUser(userId: string, email: string) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer définitivement l'utilisateur ${email} ? Cette action est irréversible.`)) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/users/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`L'utilisateur ${email} a été supprimé avec succès.`);
+        fetchAllData();
+      } else {
+        alert(`Erreur: ${data.error || "Impossible de supprimer l'utilisateur"}`);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Une erreur est survenue lors de la suppression.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Enrichir les users avec leurs chiens
@@ -226,7 +276,8 @@ export default function AdminDashboard() {
                         <th className="pb-3 font-medium pr-4">Dernière connexion</th>
                         <th className="pb-3 font-medium pr-4">Chiens</th>
                         <th className="pb-3 font-medium pr-4">Races</th>
-                        <th className="pb-3 font-medium">Check-ins</th>
+                        <th className="pb-3 font-medium pr-4">Check-ins</th>
+                        <th className="pb-3 font-medium text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -271,18 +322,51 @@ export default function AdminDashboard() {
                                 </div>
                               ) : <span className="text-gray-300 text-xs">—</span>}
                             </td>
-                            <td className="py-3">
+                            <td className="py-3 pr-4">
                               {userCheckins > 0 ? (
                                 <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">{userCheckins}</span>
                               ) : (
                                 <span className="text-gray-300 text-xs">0</span>
                               )}
                             </td>
+                            <td className="py-3 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <a
+                                  href={`mailto:${u.email}`}
+                                  title="Envoyer un email direct"
+                                  className="p-1.5 hover:bg-amber-100 rounded text-amber-600 transition-colors"
+                                >
+                                  <Mail size={15} />
+                                </a>
+                                <button
+                                  onClick={() => handleResendWelcome(u.email, u.first_name)}
+                                  disabled={resendingEmail === u.email}
+                                  title="Renvoyer l'email de bienvenue"
+                                  className="p-1.5 hover:bg-emerald-100 rounded text-emerald-600 transition-colors disabled:opacity-50"
+                                >
+                                  <RefreshCw size={15} className={resendingEmail === u.email ? "animate-spin" : ""} />
+                                </button>
+                                <button
+                                  onClick={() => setSelectedUser(u)}
+                                  title="Voir toutes les informations"
+                                  className="p-1.5 hover:bg-blue-100 rounded text-blue-600 transition-colors"
+                                >
+                                  <Info size={15} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(u.id, u.email)}
+                                  title="Supprimer définitivement"
+                                  className="p-1.5 hover:bg-red-100 rounded text-red-600 transition-colors"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         );
                       })}
                       {filteredUsers.length === 0 && (
-                        <tr><td colSpan={7} className="py-10 text-center text-gray-400">Aucun utilisateur trouvé</td></tr>
+                        <tr><td colSpan={8} className="py-10 text-center text-gray-400">Aucun utilisateur trouvé</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -394,6 +478,88 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+      {/* Modal Détails Utilisateur */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative border border-gray-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Users className="text-amber-500" size={24} /> Détails de l'utilisateur
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Email</span>
+                  <span className="font-semibold text-sm text-gray-700 break-all">{selectedUser.email}</span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">ID Utilisateur</span>
+                  <span className="font-mono text-xs text-gray-500 block break-all">{selectedUser.id}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Prénom</span>
+                  <span className="font-semibold text-sm text-gray-700">{selectedUser.first_name || '—'}</span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Nom</span>
+                  <span className="font-semibold text-sm text-gray-700">{selectedUser.last_name || '—'}</span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Pseudo</span>
+                  <span className="font-semibold text-sm text-gray-700">{selectedUser.username ? `@${selectedUser.username}` : '—'}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Date de naissance</span>
+                  <span className="font-semibold text-sm text-gray-700">{selectedUser.dob ? new Date(selectedUser.dob).toLocaleDateString('fr-FR') : '—'}</span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block font-semibold mb-0.5">Code Postal</span>
+                  <span className="font-semibold text-sm text-gray-700">{selectedUser.postal_code || '—'}</span>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                <h4 className="font-bold text-amber-800 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <Dog size={12} /> Chiens associés
+                </h4>
+                {getUserDogs(selectedUser.id).length > 0 ? (
+                  <div className="space-y-2">
+                    {getUserDogs(selectedUser.id).map((dog: any) => (
+                      <div key={dog.id} className="flex justify-between items-center text-sm border-b border-amber-100/50 pb-1 last:border-0 last:pb-0">
+                        <span className="font-bold text-amber-900">{dog.name}</span>
+                        <span className="text-gray-500 text-xs">{dog.breed} ({dog.gender === 'male' ? 'Mâle' : 'Femelle'}, {dog.age} ans)</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-amber-700">Aucun chien enregistré pour le moment.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2 border-t border-gray-100 pt-4">
+              <a
+                href={`mailto:${selectedUser.email}`}
+                className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5"
+              >
+                <Mail size={16} /> Envoyer un mail
+              </a>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition-colors"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

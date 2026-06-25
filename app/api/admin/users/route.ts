@@ -28,7 +28,7 @@ export async function GET() {
     // Fallback to public.profiles table
     const { data: profiles, error: profilesError } = await adminClient
       .from('profiles')
-      .select('id, email, created_at')
+      .select('id, email, created_at, first_name, last_name, username, dob, postal_code')
       .order('created_at', { ascending: false });
 
     if (profilesError) {
@@ -40,7 +40,12 @@ export async function GET() {
       email: p.email,
       created_at: p.created_at,
       last_sign_in_at: null,
-      email_confirmed: false, // Default to false, or true if we assume signup sends confirmation link
+      email_confirmed: false,
+      first_name: p.first_name || '',
+      last_name: p.last_name || '',
+      username: p.username || '',
+      dob: p.dob || '',
+      postal_code: p.postal_code || '',
     }));
   } else {
     users = data.users.map(u => ({
@@ -49,9 +54,15 @@ export async function GET() {
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
       email_confirmed: !!u.email_confirmed_at,
+      first_name: u.raw_user_meta_data?.first_name || '',
+      last_name: u.raw_user_meta_data?.last_name || '',
+      username: u.raw_user_meta_data?.username || '',
+      dob: u.raw_user_meta_data?.dob || '',
+      postal_code: u.raw_user_meta_data?.postal_code || '',
     }));
   }
 
   return NextResponse.json({ users });
+
 
 }
