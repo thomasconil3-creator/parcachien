@@ -5,9 +5,12 @@
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 
-html, body, #__next {
-  height: 100%;
-  overflow: hidden;
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100%;
 }
 
 :root {
@@ -25,11 +28,23 @@ html, body, #__next {
   --neutral-800: #242019;
 }
 
+/* Dark mode variables */
+.dark {
+  --neutral-50: #1a1814;
+  --neutral-100: #242019;
+  --neutral-200: #35312b;
+  --neutral-500: #a09890;
+  --neutral-800: #F2EFE9;
+  --brand-50: #2a1f00;
+  --brand-100: #3d2d00;
+}
+
 body {
   background: var(--neutral-50);
   color: var(--neutral-800);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
 }
 
 h1, h2, h3, h4, .font-display {
