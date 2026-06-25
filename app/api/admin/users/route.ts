@@ -54,11 +54,11 @@ export async function GET() {
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
       email_confirmed: !!u.email_confirmed_at,
-      first_name: u.raw_user_meta_data?.first_name || '',
-      last_name: u.raw_user_meta_data?.last_name || '',
-      username: u.raw_user_meta_data?.username || '',
-      dob: u.raw_user_meta_data?.dob || '',
-      postal_code: u.raw_user_meta_data?.postal_code || '',
+      first_name: u.user_metadata?.first_name || '',
+      last_name: u.user_metadata?.last_name || '',
+      username: u.user_metadata?.username || '',
+      dob: u.user_metadata?.dob || '',
+      postal_code: u.user_metadata?.postal_code || '',
     }));
   }
 
