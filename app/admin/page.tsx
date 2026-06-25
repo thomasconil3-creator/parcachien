@@ -2,23 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Users, Dog, MapPin, AlertTriangle, Briefcase, ChevronRight, Activity, Database, Mail, Zap, Play } from "lucide-react";
+import { Users, Dog, MapPin, AlertTriangle, Briefcase, Activity, Database, Mail, Zap, Play, Download, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
   const supabase = createClient();
   const router = useRouter();
-  
-  const [activeTab, setActiveTab] = useState("users");
+
+  const [activeTab, setActiveTab] = useState("crm");
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   // Data states
+  const [authUsers, setAuthUsers] = useState<any[]>([]);
   const [dogs, setDogs] = useState<any[]>([]);
   const [checkins, setCheckins] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
   const [lostDogs, setLostDogs] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
+  const [crmSearch, setCrmSearch] = useState("");
 
   useEffect(() => {
     checkAdmin();
@@ -26,7 +28,6 @@ export default function AdminDashboard() {
 
   async function checkAdmin() {
     const { data: { user } } = await supabase.auth.getUser();
-    // Sécurité basique (à renforcer avec une vraie table 'roles' ou RLS Admin)
     if (!user || !["ceo@velox-ia.com", "thomasconil3@gmail.com", "ceo@parcachien.com"].includes(user.email ?? "")) {
       router.push("/");
       return;
@@ -39,12 +40,14 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const [
-        { data: d }, 
-        { data: c }, 
-        { data: p }, 
-        { data: l }, 
+        usersRes,
+        { data: d },
+        { data: c },
+        { data: p },
+        { data: l },
         { data: r }
       ] = await Promise.all([
+        fetch('/api/admin/users').then(r => r.json()),
         supabase.from('dogs').select('*').order('created_at', { ascending: false }),
         supabase.from('checkins').select('*').order('created_at', { ascending: false }),
         supabase.from('partners').select('*').order('name'),
@@ -52,6 +55,7 @@ export default function AdminDashboard() {
         supabase.from('forum_reports').select('*').order('created_at', { ascending: false }),
       ]);
 
+      setAuthUsers(usersRes.users || []);
       setDogs(d || []);
       setCheckins(c || []);
       setPartners(p || []);
@@ -63,10 +67,60 @@ export default function AdminDashboard() {
     setLoading(false);
   }
 
+  // Enrichir les users avec leurs chiens
+  function getUserDogs(userId: string) {
+    return dogs.filter(d => d.user_id === userId);
+  }
+
+  function getUserCheckins(userId: string) {
+    return checkins.filter(c => c.user_id === userId).length;
+  }
+
+  function formatDateTime(iso: string | null) {
+    if (!iso) return 'Jamais';
+    const d = new Date(iso);
+    return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Export CSV
+  function exportCSV() {
+    const rows = [
+      ['Email', 'Date inscription', 'Heure inscription', 'Email confirmé', 'Dernière connexion', 'Nb chiens', 'Noms chiens', 'Races', 'Nb check-ins', 'ID utilisateur'],
+      ...authUsers.map(u => {
+        const userDogs = getUserDogs(u.id);
+        const d = new Date(u.created_at);
+        return [
+          u.email,
+          d.toLocaleDateString('fr-FR'),
+          d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          u.email_confirmed ? 'Oui' : 'Non',
+          formatDateTime(u.last_sign_in_at),
+          userDogs.length,
+          userDogs.map((d: any) => d.name).join(' | '),
+          userDogs.map((d: any) => d.breed).join(' | '),
+          getUserCheckins(u.id),
+          u.id,
+        ];
+      })
+    ];
+    const csv = rows.map(r => r.join(';')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `parcachien-users-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  }
+
+  const filteredUsers = authUsers.filter(u =>
+    u.email?.toLowerCase().includes(crmSearch.toLowerCase())
+  );
+
   if (!isAdmin) return <div className="p-10 text-center">Accès restreint...</div>;
 
   const tabs = [
-    { id: "users", label: "Utilisateurs / Chiens", icon: Dog, count: dogs.length },
+    { id: "crm", label: "CRM Utilisateurs", icon: Users, count: authUsers.length },
+    { id: "users", label: "Chiens", icon: Dog, count: dogs.length },
     { id: "checkins", label: "Check-ins Actifs", icon: MapPin, count: checkins.length },
     { id: "partners", label: "Partenaires B2B", icon: Briefcase, count: partners.length },
     { id: "lost", label: "Chiens Perdus", icon: AlertTriangle, count: lostDogs.length },
@@ -111,38 +165,157 @@ export default function AdminDashboard() {
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-800">Vue d'ensemble</h2>
           <button onClick={fetchAllData} className="text-sm bg-white border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50">
-            Actualiser les données
+            Actualiser
           </button>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center h-64">Chargement de la base de données...</div>
+          <div className="flex items-center justify-center h-64">Chargement...</div>
         ) : (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            
-            {/* Table Users/Dogs */}
+
+            {/* CRM — onglet principal */}
+            {activeTab === "crm" && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold">CRM — {authUsers.length} utilisateurs inscrits</h3>
+                  <button
+                    onClick={exportCSV}
+                    className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 text-sm font-semibold"
+                  >
+                    <Download size={14} />
+                    Export CSV
+                  </button>
+                </div>
+
+                {/* Barre de recherche */}
+                <div className="relative mb-4">
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par email..."
+                    value={crmSearch}
+                    onChange={e => setCrmSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                  />
+                </div>
+
+                {/* Stats rapides */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="bg-amber-50 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-amber-600">{authUsers.length}</p>
+                    <p className="text-xs text-gray-500 mt-1">Utilisateurs totaux</p>
+                  </div>
+                  <div className="bg-green-50 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-green-600">{authUsers.filter(u => u.email_confirmed).length}</p>
+                    <p className="text-xs text-gray-500 mt-1">Emails confirmés</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-blue-600">{dogs.length}</p>
+                    <p className="text-xs text-gray-500 mt-1">Profils chiens créés</p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-gray-500">
+                        <th className="pb-3 font-medium pr-4">Email</th>
+                        <th className="pb-3 font-medium pr-4">Inscription</th>
+                        <th className="pb-3 font-medium pr-4">Email ✓</th>
+                        <th className="pb-3 font-medium pr-4">Dernière connexion</th>
+                        <th className="pb-3 font-medium pr-4">Chiens</th>
+                        <th className="pb-3 font-medium pr-4">Races</th>
+                        <th className="pb-3 font-medium">Check-ins</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map(u => {
+                        const userDogs = getUserDogs(u.id);
+                        const userCheckins = getUserCheckins(u.id);
+                        return (
+                          <tr key={u.id} className="border-b border-gray-50 hover:bg-amber-50 transition-colors">
+                            <td className="py-3 pr-4 font-medium text-gray-800">{u.email}</td>
+                            <td className="py-3 pr-4 text-xs text-gray-600 whitespace-nowrap">
+                              <div>{new Date(u.created_at).toLocaleDateString('fr-FR')}</div>
+                              <div className="text-gray-400">{new Date(u.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                            </td>
+                            <td className="py-3 pr-4">
+                              <span className={`px-2 py-0.5 rounded-full text-xs ${u.email_confirmed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                                {u.email_confirmed ? '✓' : '✗'}
+                              </span>
+                            </td>
+                            <td className="py-3 pr-4 text-xs whitespace-nowrap">
+                              {u.last_sign_in_at ? (
+                                <>
+                                  <div className="text-gray-600">{new Date(u.last_sign_in_at).toLocaleDateString('fr-FR')}</div>
+                                  <div className="text-gray-400">{new Date(u.last_sign_in_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                                </>
+                              ) : <span className="text-gray-300">Jamais</span>}
+                            </td>
+                            <td className="py-3 pr-4">
+                              {userDogs.length > 0 ? (
+                                <div className="flex flex-col gap-0.5">
+                                  {userDogs.map((d: any) => (
+                                    <span key={d.id} className="text-amber-600 font-semibold text-xs">{d.name}</span>
+                                  ))}
+                                </div>
+                              ) : <span className="text-gray-300 text-xs">—</span>}
+                            </td>
+                            <td className="py-3 pr-4">
+                              {userDogs.length > 0 ? (
+                                <div className="flex flex-col gap-0.5">
+                                  {userDogs.map((d: any) => (
+                                    <span key={d.id} className="text-gray-500 text-xs">{d.breed}</span>
+                                  ))}
+                                </div>
+                              ) : <span className="text-gray-300 text-xs">—</span>}
+                            </td>
+                            <td className="py-3">
+                              {userCheckins > 0 ? (
+                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">{userCheckins}</span>
+                              ) : (
+                                <span className="text-gray-300 text-xs">0</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {filteredUsers.length === 0 && (
+                        <tr><td colSpan={7} className="py-10 text-center text-gray-400">Aucun utilisateur trouvé</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Table Dogs */}
             {activeTab === "users" && (
               <div>
-                <h3 className="text-lg font-bold mb-4">Inscriptions (Chiens)</h3>
+                <h3 className="text-lg font-bold mb-4">Profils Chiens</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
                       <tr className="border-b border-gray-100 text-gray-500">
                         <th className="pb-3 font-medium">Nom du chien</th>
                         <th className="pb-3 font-medium">Race</th>
-                        <th className="pb-3 font-medium">ID Utilisateur</th>
+                        <th className="pb-3 font-medium">Email propriétaire</th>
                         <th className="pb-3 font-medium">Création</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {dogs.map(d => (
-                        <tr key={d.id} className="border-b border-gray-50">
-                          <td className="py-3 font-medium">{d.name}</td>
-                          <td className="py-3 text-gray-500">{d.breed}</td>
-                          <td className="py-3 text-xs text-gray-400 font-mono">{d.user_id}</td>
-                          <td className="py-3 text-gray-500">{new Date(d.created_at).toLocaleDateString()}</td>
-                        </tr>
-                      ))}
+                      {dogs.map(d => {
+                        const owner = authUsers.find(u => u.id === d.user_id);
+                        return (
+                          <tr key={d.id} className="border-b border-gray-50">
+                            <td className="py-3 font-medium">{d.name}</td>
+                            <td className="py-3 text-gray-500">{d.breed}</td>
+                            <td className="py-3 text-sm text-gray-700">{owner?.email || <span className="text-gray-300 text-xs font-mono">{d.user_id.slice(0,8)}...</span>}</td>
+                            <td className="py-3 text-gray-500">{new Date(d.created_at).toLocaleDateString('fr-FR')}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -185,9 +358,6 @@ export default function AdminDashboard() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold flex items-center gap-2"><Zap className="text-amber-500" size={20}/> Scénarios Automatisés</h3>
-                  <button className="text-sm bg-gradient-to-r from-amber-400 to-amber-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition-shadow font-semibold">
-                    + Nouveau scénario
-                  </button>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {[
@@ -215,10 +385,9 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* Other tabs omitted for brevity, simple messages instead */}
             {["checkins", "lost", "reports"].includes(activeTab) && (
               <div className="text-gray-500 py-10 text-center border-2 border-dashed border-gray-100 rounded-xl">
-                Module de données "{activeTab}" activé. ({tabs.find(t=>t.id === activeTab)?.count} enregistrements)
+                Module "{activeTab}" — {tabs.find(t=>t.id === activeTab)?.count} enregistrements
               </div>
             )}
 

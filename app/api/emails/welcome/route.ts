@@ -21,7 +21,7 @@ export async function POST(request: Request) {
           
           <!-- Content -->
           <div style="padding: 40px 30px; background-color: white;">
-            <h2 style="color: #242019; margin-top: 0; font-size: 22px;">Salut ${firstName || 'l\\'ami'} ! 👋</h2>
+            <h2 style="color: #242019; margin-top: 0; font-size: 22px;">Salut ${firstName || "l'ami"} ! 👋</h2>
             <p style="color: #4A443A; font-size: 16px; line-height: 1.6;">
               Bienvenue sur ParcAChien. Ton inscription est officiellement validée ! Nous sommes ravis de t'accueillir dans la plus grande meute de PACA.
             </p>
