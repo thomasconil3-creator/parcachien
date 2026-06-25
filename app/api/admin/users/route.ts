@@ -20,20 +20,38 @@ export async function GET() {
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
+  let users = [];
   const { data, error } = await adminClient.auth.admin.listUsers({ perPage: 1000 });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Supabase listUsers failed, falling back to profiles table:", error);
+    // Fallback to public.profiles table
+    const { data: profiles, error: profilesError } = await adminClient
+      .from('profiles')
+      .select('id, email, created_at')
+      .order('created_at', { ascending: false });
+
+    if (profilesError) {
+      return NextResponse.json({ error: profilesError.message }, { status: 500 });
+    }
+
+    users = (profiles || []).map(p => ({
+      id: p.id,
+      email: p.email,
+      created_at: p.created_at,
+      last_sign_in_at: null,
+      email_confirmed: false, // Default to false, or true if we assume signup sends confirmation link
+    }));
+  } else {
+    users = data.users.map(u => ({
+      id: u.id,
+      email: u.email,
+      created_at: u.created_at,
+      last_sign_in_at: u.last_sign_in_at,
+      email_confirmed: !!u.email_confirmed_at,
+    }));
   }
 
-  // On ne renvoie que les champs utiles (pas les tokens internes)
-  const users = data.users.map(u => ({
-    id: u.id,
-    email: u.email,
-    created_at: u.created_at,
-    last_sign_in_at: u.last_sign_in_at,
-    email_confirmed: !!u.email_confirmed_at,
-  }));
-
   return NextResponse.json({ users });
+
 }
