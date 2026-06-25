@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SeoFooter from "@/components/SeoFooter";
+import ContentNav from "@/components/ContentNav";
 
 const ARTICLES: Record<string, {
   title: string;
@@ -680,50 +681,73 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
   const article = ARTICLES[slug];
   if (!article) notFound();
 
+  const CATEGORY_COLORS: Record<string, string> = {
+    "Guide": "bg-amber-100 text-amber-700",
+    "Guide local": "bg-orange-100 text-orange-700",
+    "Conseils": "bg-teal-100 text-teal-700",
+    "Conseils & Santé": "bg-teal-100 text-teal-700",
+    "À propos": "bg-purple-100 text-purple-700",
+    "Réglementation": "bg-blue-100 text-blue-700",
+    "Santé & Urgences": "bg-red-100 text-red-700",
+  };
+  const catColor = CATEGORY_COLORS[article.category] || "bg-gray-100 text-gray-700";
+
   return (
-    <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 740, margin: "0 auto", padding: "40px 20px" }}>
-      <nav style={{ marginBottom: 24, fontSize: 13, color: "#888" }}>
-        <a href="/" style={{ color: "#7C6EF5", textDecoration: "none" }}>ParcAChien</a>
-        {" › "}
-        <a href="/blog" style={{ color: "#7C6EF5", textDecoration: "none" }}>Blog</a>
-        {" › "}
-        {article.title}
-      </nav>
+    <div className="min-h-screen" style={{ background: "var(--neutral-50)" }}>
+      <ContentNav />
 
-      <div style={{ marginBottom: 16, display: "flex", gap: 10, alignItems: "center" }}>
-        <span style={{ background: "#f0eeff", color: "#7C6EF5", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>
-          {article.category}
-        </span>
-        <span style={{ fontSize: 12, color: "#aaa" }}>{article.date} · {article.readTime} de lecture</span>
-      </div>
+      {/* Hero image */}
+      {article.image && (
+        <div className="w-full h-64 sm:h-80 overflow-hidden">
+          <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+        </div>
+      )}
 
-      <h1 style={{ fontSize: 30, fontWeight: 800, color: "#1a1a2e", lineHeight: 1.2, marginBottom: 32 }}>
-        {article.title}
-      </h1>
+      <main className="max-w-3xl mx-auto px-5 py-10 pb-20">
+        {/* Breadcrumb */}
+        <nav className="mb-6 text-sm" style={{ color: "var(--neutral-500)" }}>
+          <a href="/" className="no-underline hover:underline" style={{ color: "#7C6EF5" }}>ParcAChien</a>
+          <span className="mx-2">›</span>
+          <a href="/blog" className="no-underline hover:underline" style={{ color: "#7C6EF5" }}>Blog</a>
+          <span className="mx-2">›</span>
+          <span className="line-clamp-1">{article.title}</span>
+        </nav>
 
-      <div
-        style={{ fontSize: 16, lineHeight: 1.8, color: "#444" }}
-        dangerouslySetInnerHTML={{ __html: article.content }}
-      />
+        {/* Meta */}
+        <div className="flex items-center gap-3 mb-5">
+          <span className={`text-xs font-bold px-3 py-1 rounded-full ${catColor}`}>
+            {article.category}
+          </span>
+          <span className="text-xs" style={{ color: "var(--neutral-500)" }}>
+            {article.date} · {article.readTime} de lecture
+          </span>
+        </div>
 
-      <div style={{ marginTop: 48, borderTop: "1px solid #f0eeff", paddingTop: 32, textAlign: "center" }}>
-        <a
-          href="/"
-          style={{
-            display: "inline-block",
-            background: "#7C6EF5",
-            color: "#fff",
-            padding: "14px 32px",
-            borderRadius: 50,
-            fontWeight: 700,
-            fontSize: 15,
-            textDecoration: "none",
-          }}
-        >
-          🗺️ Explorer les parcs sur la carte
-        </a>
-      </div>
-      <SeoFooter />
-    </main>
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-8" style={{ color: "var(--neutral-800)", fontFamily: "'Nunito', sans-serif" }}>
+          {article.title}
+        </h1>
+
+        {/* Article body */}
+        <div
+          className="prose-article"
+          style={{ fontSize: 16, lineHeight: 1.85, color: "var(--neutral-800)" }}
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
+
+        {/* CTA */}
+        <div className="mt-14 rounded-2xl p-8 text-center" style={{ background: "linear-gradient(135deg, #7C6EF5 0%, #F59500 100%)" }}>
+          <p className="text-white font-black text-xl mb-1" style={{ fontFamily: "'Nunito', sans-serif" }}>
+            🗺️ Voir les parcs en temps réel
+          </p>
+          <p className="text-white/80 text-sm mb-5">Check-ins live · 308+ espaces PACA</p>
+          <a href="/" className="inline-block bg-white text-[#7C6EF5] font-bold px-8 py-3 rounded-full no-underline text-sm hover:shadow-lg transition-shadow">
+            Explorer la carte →
+          </a>
+        </div>
+
+        <SeoFooter />
+      </main>
+    </div>
   );
 }

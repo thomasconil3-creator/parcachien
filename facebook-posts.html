@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParcAChien — 20 Posts Facebook</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0f0f1a;
+      color: #e2e2f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0d0d1f 100%);
+      border-bottom: 1px solid rgba(124, 110, 245, 0.3);
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #7C6EF5;
+      letter-spacing: -1px;
+    }
+    .logo span { color: #fff; }
+    .tagline {
+      margin-top: 8px;
+      color: #9090b0;
+      font-size: 1rem;
+    }
+    .meta-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      background: rgba(124, 110, 245, 0.15);
+      border: 1px solid rgba(124, 110, 245, 0.35);
+      color: #b0a8ff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 48px auto 0;
+      padding: 0 20px;
+    }
+
+    .series-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #7C6EF5;
+      margin: 48px 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .series-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(124, 110, 245, 0.2);
+    }
+
+    .card {
+      background: #1a1a2e;
+      border: 1px solid rgba(124, 110, 245, 0.18);
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      margin-bottom: 22px;
+    }
+    .card:hover {
+      border-color: rgba(124, 110, 245, 0.45);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      gap: 12px;
+    }
+    .post-number {
+      background: rgba(124, 110, 245, 0.2);
+      color: #7C6EF5;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .copy-badge {
+      background: rgba(124, 110, 245, 0.1);
+      border: 1px solid rgba(124, 110, 245, 0.3);
+      color: #9d94ff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 13px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .post-text {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #d8d8ee;
+      white-space: pre-wrap;
+      background: #111126;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .image-suggestion {
+      flex: 1;
+      min-width: 200px;
+      font-size: 0.82rem;
+      font-style: italic;
+      color: #7878a0;
+      background: rgba(255,255,255,0.03);
+      border-left: 2px solid rgba(124, 110, 245, 0.3);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    .image-suggestion strong {
+      color: #9090b8;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .time-badge {
+      background: rgba(52, 199, 89, 0.12);
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      color: #5dd879;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 7px 13px;
+      border-radius: 8px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #4a4a6a;
+      font-size: 0.8rem;
+    }
+    footer a { color: #7C6EF5; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">&#x1F43E; ParcAChien<span>.com</span></div>
+  <p class="tagline">Tous les espaces canins de PACA, gratuits et géolocalisés</p>
+  <div class="meta-bar">
+    <span class="meta-chip">&#x1F4D8; Page Facebook @parcachien</span>
+    <span class="meta-chip">&#x1F5D3;&#xFE0F; 20 posts prêts à publier</span>
+    <span class="meta-chip">&#x1F4CD; PACA — Marseille, Nice, Toulon, Aix</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- SÉRIE 1 — PARC DU JOUR -->
+  <div class="series-title">Série 1 — Parc du jour (5 posts)</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #1</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F333; Parc du Jour — Parc Gauffredy, Aix-en-Provence &#x1F43E;
+
+On commence avec un coup de coeur : le Parc Gauffredy à Aix-en-Provence !
+
+900 m² entièrement clôturés, deux zones séparées (petits gabarits d'un côté, grands chiens de l'autre), un sol propre et de l'ombre en été. Noté 4,5/5 par la communauté ParcAChien — et franchement, ça se mérite !
+
+C'est exactement le genre d'endroit où on peut laisser filer la laisse l'esprit tranquille, pendant que toutou se fait des amis à quatre pattes. &#x1F415;
+
+Pour les chiens sociables ET pour les maîtres qui veulent souffler, ce parc coche toutes les cases. On adore.
+
+&#x1F4CD; Aix-en-Provence — retrouvez l'adresse exacte, les horaires et les avis sur notre site.
+
+Vous y êtes déjà allé·e ? Dites-nous ce que vous en pensez en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #aixenprovence #parccaninaix #espacecain #promenadeduChien #paca #dogpark #chiensdepaca</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog park fence two dogs playing sunny" ou "golden retriever fenced park". Belle lumière dorée, deux chiens qui jouent, clôture verte en arrière-plan.</div>
+      <div class="time-badge">&#x23F0; Lun–Mer · 9h–11h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #2</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F333; Parc du Jour — Parc des Lices, Toulon &#x1F3C5;
+
+On ne présente plus le Parc des Lices à Toulon… mais on le fait quand même, parce qu'il le vaut bien !
+
+90 000 m² de verdure en plein coeur de la ville, un parcours d'agility pour les chiens sportifs, et la présence du club Canibest avec des éducateurs canins professionnels sur place. Un luxe absolu pour nos amis à quatre pattes !
+
+Idéal pour une grande balade le week-end, ou pour commencer une formation comportementale avec votre chien dans un cadre magnifique. &#x1F43E;
+
+C'est l'un des parcs les plus appréciés de notre base ParcAChien, et on comprend pourquoi.
+
+&#x1F4CD; Toulon — plan d'accès, horaires et avis complets sur notre site.
+
+Votre chien est plutôt agility ou farniente sous les arbres ? Répondez en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #toulon #parcdeslices #chien #dogpark #agility #educationcanine #espacecain #paca #canibest</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog agility park green grass" ou "large city park with dogs". Grand parc vert, lumière de fin d'après-midi, chien en mouvement.</div>
+      <div class="time-badge">&#x23F0; Ven–Sam · 10h–12h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #3</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F333; Parc du Jour — Espace canin Lodi, Marseille 6ème &#x1F9E1;
+
+Marseille, voilà un espace canin qui mérite sa réputation : l'espace Lodi dans le 6ème arrondissement !
+
+Clôturé, bien entretenu, et idéalement situé en plein coeur de la ville — parfait pour une pause toutou avant ou après le travail. Pas besoin de traverser Marseille pour offrir à votre chien un moment sans laisse dans un cadre sécurisé.
+
+On aime particulièrement cet espace pour les chiens citadins qui n'ont pas accès à un jardin. Un bol d'air (et de liberté !) au milieu du béton. &#x1F43E;
+
+&#x1F4CD; Marseille 6ème — retrouvez l'adresse et les horaires sur ParcAChien.
+
+Vous habitez le coin ? Dites-nous si vous y allez régulièrement ! Et taguez un voisin qui a un chien &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #marseille #marseille6 #espacecain #chien #dogpark #chiendeMarseille #paca #promeneztoutou #marseillemaville</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog city park urban leash free" ou "small dog park marseille". Cadre urbain, espace vert compact, chien heureux sans laisse.</div>
+      <div class="time-badge">&#x23F0; Mar–Jeu · 7h–9h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #4</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F333; Parc du Jour — Espace canin de Cimiez, Nice &#x1F33F;
+
+Direction la Côte d'Azur pour notre parc du jour : l'espace canin de Cimiez à Nice !
+
+Niché dans l'un des quartiers résidentiels les plus calmes de Nice, cet espace canin offre un cadre tranquille, loin de l'agitation du bord de mer. Idéal pour les chiens un peu timides qui préfèrent une ambiance sereine pour leurs socialisation. &#x1F43E;
+
+Le quartier de Cimiez est magnifique — quelques minutes de balade avec votre chien et vous passez devant des jardins romains et des musées. Une promenade culturelle et canine à la fois ! &#x1F3DB;&#xFE0F;
+
+&#x1F4CD; Nice, quartier Cimiez — adresse et avis complets sur ParcAChien.
+
+Vous êtes Niçois·e et vous avez un chien ? Partagez votre espace canin préféré en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #nice #cimiezbelle #chien #espacecain #dogpark #cotedazur #paca #nicemaville #chiendenice</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "nice france park dog" ou "cote d'azur garden calm". Quartier résidentiel élégant, verdure, lumière méditerranéenne douce.</div>
+      <div class="time-badge">&#x23F0; Mer · 9h–11h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #5</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F333; Parc du Jour — Parc Raoulx, Toulon &#x1F3C6;
+
+On garde le meilleur pour la fin de la semaine : le Parc Raoulx à Toulon, tout simplement le plus grand espace canin de la ville !
+
+11 000 m² — vous avez bien lu, onze mille mètres carrés — pour que votre chien puisse courir, explorer, rencontrer, et se dépenser sans compter. &#x1F415;&#x1F4A8;
+
+C'est l'endroit idéal pour les chiens qui ont besoin de beaucoup d'exercice, les races sportives, ou simplement les chiens qui adorent les grandes tablées canines le week-end. La communauté ParcAChien adore cet espace.
+
+&#x1F4CD; Toulon — retrouvez l'accès, les photos et les avis sur notre site.
+
+Vous avez déjà emmené votre chien au Parc Raoulx ? Partagez votre expérience en commentaire et envoyez-nous une photo de votre toutou ! &#x1F4F8;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #toulon #parcraoulx #chien #dogpark #espacecain #paca #grandparccanin #chiendetoulon #promeneztoutou</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog running large field open space" ou "dogs playing wide grass park". Grand espace ouvert, plusieurs chiens en liberté, ambiance énergique.</div>
+      <div class="time-badge">&#x23F0; Sam–Dim · 8h–10h</div>
+    </div>
+  </div>
+
+  <!-- SÉRIE 2 — LE SAVIEZ-VOUS ? -->
+  <div class="series-title">Série 2 — Le saviez-vous ? (4 posts)</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #6</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4A1; Le saviez-vous ? Les espaces canins en PACA, c'est (presque) toujours GRATUIT !
+
+On a référencé plus de 308 espaces canins à travers toute la région PACA, et la grande majorité d'entre eux sont entièrement gratuits et accessibles à tous les propriétaires de chiens.
+
+Pas d'abonnement, pas de badge, pas de réservation. Vous arrivez, vous ouvrez la clôture, votre chien est heureux. Simple. &#x1F43E;
+
+Marseille, Nice, Toulon, Aix-en-Provence, Avignon, Arles, Gap, Digne… On les a tous cartographiés pour vous, avec les horaires, les avis de la communauté, les équipements disponibles et même les photos.
+
+&#x1F4F1; Notre application arrive bientôt sur l'App Store et Google Play — pour trouver l'espace canin le plus proche en un instant.
+
+En attendant, tout est disponible sur notre site !
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #espacecain #chien #paca #gratuit #dogpark #marseille #nice #toulon #chiensdepaca</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "happy dog park free running" ou carte stylisée de la région PACA. Ambiance carte / exploration, ou chien en pleine liberté.</div>
+      <div class="time-badge">&#x23F0; Lun · 12h–14h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #7</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4A1; Le saviez-vous ? Marseille et ses espaces canins aux 4 coins de la ville !
+
+Marseille, c'est 16 arrondissements… et presque autant d'espaces canins répartis sur tout le territoire ! &#x1F43E;
+
+Du 1er au 16ème, la mairie a fait un effort remarquable pour que chaque quartier ait son coin de verdure clôturé. Des espaces en bord de mer, dans les collines, en plein coeur des quartiers populaires ou dans les beaux quartiers du sud.
+
+Que vous habitiez Bonneveine, La Valentine, Saint-Antoine ou le Vieux-Port, il y a forcément un espace canin à moins de 15 minutes de chez vous.
+
+On les a tous répertoriés sur ParcAChien — avec les adresses précises, les horaires, les équipements et les avis de la communauté.
+
+&#x1F4CD; Trouvez votre espace canin de quartier sur notre site !
+
+Quel est votre espace canin de quartier préféré à Marseille ? Dites-nous quel arrondissement vous représentez ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #marseille #chien #espacecanin #chiendeMarseille #dogpark #marseillelaville #13 #paca #quartiermarseille</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "marseille city dog walk" ou "marseille park sunny". Vue urbaine de Marseille avec un chien, lumière méditerranéenne.</div>
+      <div class="time-badge">&#x23F0; Mar–Jeu · 9h–11h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #8</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4A1; Le saviez-vous ? Les plages du Mourillon acceptent les chiens hors saison !
+
+Bonne nouvelle pour tous les maîtres qui rêvent de voir leur chien courir sur le sable : les plages du Mourillon à Toulon sont accessibles aux chiens d'octobre à mai inclus !
+
+Imaginez la scène : votre chien qui galope au bord de la Méditerranée, les vagues qui s'écrasent, le soleil d'hiver sur les collines varoise… C'est ça, la belle vie en PACA. &#x1F30A;&#x1F43E;
+
+Quelques règles à respecter : laisse hors des zones délimitées, sacs ramasse-crottes obligatoires, et respect des autres promeneurs. Mais sinon, c'est un moment magique garanti pour toutou !
+
+Notez bien : en période estivale (juin à septembre), les plages sont réservées aux baigneurs — soyez respectueux·se.
+
+&#x1F4CD; Retrouvez toutes les informations sur les spots dog-friendly de Toulon sur ParcAChien.
+
+Vous avez déjà fait ça avec votre chien ? Partagez une photo en commentaire ! &#x1F4F8;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #toulon #mourillon #plage #chiensurlaPlage #dogfriendly #paca #chiendetoulon #mer #autommne</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog running beach winter" ou "dog sea shore france". Chien heureux sur une plage en hors-saison, lumière dorée d'hiver, méditerranée.</div>
+      <div class="time-badge">&#x23F0; Sam · 10h–12h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #9</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4A1; Le saviez-vous ? Des éducateurs canins professionnels au Parc des Lices (Toulon) !
+
+Le Parc des Lices à Toulon n'est pas qu'un simple espace canin : c'est aussi un lieu d'apprentissage grâce au club Canibest, présent sur place avec des éducateurs canins certifiés. &#x1F3C5;
+
+Vous pouvez y initier votre chien à l'agility, travailler l'obéissance de base, ou simplement bénéficier de conseils professionnels pendant que votre chien profite de l'espace. C'est rare d'avoir cette qualité de service dans un parc public, et ça fait vraiment la différence.
+
+Que vous ayez un chiot à socialiser, un chien réactif à recadrer ou juste envie de créer un lien plus fort avec votre compagnon, le club Canibest est une vraie ressource.
+
+&#x1F4CD; Informations et horaires du club Canibest disponibles sur ParcAChien.
+
+Vous avez déjà suivi une formation canine ? Partagez votre expérience en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #toulon #canibest #educationcanine #agility #chien #dressage #parcdeslices #paca #chienbienélevé</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog agility training professional" ou "dog trainer park exercise". Éducateur et chien en session d'agility, parc vert.</div>
+      <div class="time-badge">&#x23F0; Mer · 12h–14h</div>
+    </div>
+  </div>
+
+  <!-- SÉRIE 3 — CONSEILS PRATIQUES -->
+  <div class="series-title">Série 3 — Conseils pratiques (4 posts)</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #10</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x2705; 5 choses à vérifier avant d'aller dans un parc canin
+
+Avant de lâcher votre chien dans un espace canin, un petit check-list s'impose pour que tout se passe bien — pour vous ET pour les autres !
+
+1&#xFE0F;&#x20E3; La clôture est-elle en bon état ? Vérifiez que les grilles ne présentent pas de trous ou de passages inattendus avant d'entrer.
+
+2&#xFE0F;&#x20E3; Votre chien est-il à jour de ses vaccins ? Dans un espace partagé, c'est indispensable pour protéger tous les chiens.
+
+3&#xFE0F;&#x20E3; Avez-vous de l'eau et une gamelle ? Même pour une courte sortie, un chien qui court se déshydrate vite, surtout en PACA l'été.
+
+4&#xFE0F;&#x20E3; Avez-vous assez de sacs ramasse-crottes ? La règle d'or de tout propriétaire responsable.
+
+5&#xFE0F;&#x20E3; Votre chien est-il en condition de socialiser ? Un chien stressé, malade ou en chaleur n'est pas prêt pour le parc ce jour-là.
+
+Partagez ce post avec un ami propriétaire de chien — on est tous responsables ensemble ! &#x1F43E;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #conseils #chien #parccaniné #propriétaireresponsable #dogpark #paca #checklist #chiensdepaca #astuce</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog owner preparing walk bag" ou "checklist dog park essentials". Maître préparant le sac de promenade, chien assis à côté, cadre lumineux.</div>
+      <div class="time-badge">&#x23F0; Lun · 8h–10h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #11</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F43E; Comment bien présenter son chien à d'autres chiens dans un parc ?
+
+La première rencontre dans un parc canin, ça peut être le début d'une belle amitié… ou un moment de stress si on ne fait pas les choses dans le bon ordre. Voici comment ça se passe idéalement :
+
+&#x1F7E3; Restez calme vous-même. Les chiens sentent notre anxiété — si vous êtes stressé·e, votre chien le sera aussi.
+
+&#x1F7E3; Laissez votre chien approcher de son propre gré. Ne forcez jamais une rencontre front-to-front.
+
+&#x1F7E3; Observez le langage corporel. Queue détendue, corps souple = bon signe. Queue rigide, poils hérissés = prenez de la distance.
+
+&#x1F7E3; Ne vous précipitez pas pour intervenir. Les chiens ont leurs propres codes de communication — faites confiance au processus.
+
+&#x1F7E3; Félicitez et récompensez les bonnes interactions. Renforcement positif toujours !
+
+Votre chien est-il plutôt sociable ou solitaire dans les parcs ? Dites-nous en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #conseils #socialisation #chien #dogpark #comportementcanin #paca #astuces #educationcanine #bienêtreanimal</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "two dogs meeting sniffing nose to nose" ou "dogs greeting park". Deux chiens qui se reniflent calmement, corps décontractés, herbe verte.</div>
+      <div class="time-badge">&#x23F0; Mar · 10h–12h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #12</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F392; Quoi emporter pour une sortie au parc canin ? Notre liste complète !
+
+Une bonne sortie au parc canin ça se prépare. Voici ce qu'on conseille d'avoir dans votre sac :
+
+&#x1F4A7; De l'eau + une gamelle pliable — essentiel, surtout en été en PACA où il fait chaud !
+
+&#x1F4B3; Des sacs ramasse-crottes — toujours, toujours, toujours.
+
+&#x1F9F8; Un ou deux jouets favoris — pour canaliser l'énergie et relancer le jeu en cas de fatigue sociale.
+
+&#x1F36C; Des friandises — pour récompenser les bons comportements et garder l'attention de votre chien.
+
+&#x1F4F1; Votre téléphone chargé — pour l'appli ParcAChien (bientôt dispo !) et pour immortaliser les moments mignons.
+
+&#x1F9F4; Une petite trousse de premiers secours — pince à tiques, spray cicatrisant, compresses. On espère ne jamais en avoir besoin, mais c'est toujours utile.
+
+Et vous, vous avez un secret de parc canin que vous emportez toujours ? Partagez-le en commentaire ! &#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #conseils #chien #parccaniné #dogpark #paca #astuces #listecomplète #promènechien #chiensdepaca</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog walk bag essentials flat lay" ou "pet accessories outdoor". Flat lay d'accessoires de promenade : gamelle, sacs, jouet, friandises. Fond neutre propre.</div>
+      <div class="time-badge">&#x23F0; Jeu · 9h–11h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #13</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x2753; Chien sans laisse : dans quels espaces c'est autorisé en PACA ?
+
+C'est LA question qu'on nous pose le plus souvent ! On fait le point &#x1F447;
+
+En PACA comme partout en France, un chien doit être tenu en laisse dans les espaces publics. Mais il existe des exceptions précieuses pour nos toutous :
+
+&#x1F7E2; Les espaces canins clôturés — c'est justement pour ça qu'ils existent. 308+ répertoriés sur ParcAChien !
+
+&#x1F7E2; Certaines plages hors saison — comme celles du Mourillon à Toulon (oct.–mai). Vérifiez les arrêtés municipaux.
+
+&#x1F7E2; Certains parcs et forêts en zones peu fréquentées — sous réserve des règles locales et à condition que votre chien réponde parfaitement au rappel.
+
+&#x1F534; Les parcs urbains classiques, rues, plages en saison : laisse obligatoire.
+
+Notre conseil : utilisez les espaces dédiés. C'est sécurisé pour votre chien, respectueux des autres, et ça évite les amendes.
+
+Trouvez l'espace canin le plus proche de chez vous sur ParcAChien ! &#x1F43E;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #sanslaise #espacecanin #dogpark #paca #reglementation #conseilchien #chienlibre #bienêtreanimal</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog running free field off leash happy" ou "dog off leash park". Chien heureux en plein élan, sans laisse, grand sourire canin.</div>
+      <div class="time-badge">&#x23F0; Mer · 11h–13h</div>
+    </div>
+  </div>
+
+  <!-- SÉRIE 4 — COMMUNAUTÉ -->
+  <div class="series-title">Série 4 — Communauté (4 posts)</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #14</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F43E; Bienvenue sur la page ParcAChien !
+
+Bonjour à tous les propriétaires de chiens de PACA — et au-delà ! On est super contents de vous accueillir ici. &#x1F917;
+
+ParcAChien, c'est quoi ? C'est le guide complet des espaces canins en région Provence-Alpes-Côte d'Azur. On a référencé plus de 308 parcs, espaces et zones canines sur Marseille, Nice, Toulon, Aix-en-Provence, Avignon et toute la région.
+
+Notre mission est simple : faire en sorte que chaque propriétaire de chien en PACA puisse trouver facilement un espace adapté, proche de chez lui, gratuit et bien entretenu.
+
+Sur cette page, vous retrouverez :
+&#x1F4CD; Des parcs du jour avec tous les détails
+&#x1F4A1; Des conseils pratiques pour les sorties canines
+&#x1F4AC; Des questions pour faire vivre la communauté
+&#x1F4F1; Et bientôt, les infos sur notre application mobile !
+
+Likez la page, partagez avec vos amis chiens-addicts, et bienvenue dans la meute ! &#x1F43A;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #paca #espacecain #dogpark #marseille #nice #toulon #communauté #bienvenuebienvenu</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "group of dogs playing park" ou "happy dogs community park". Groupe de chiens heureux ensemble, diversité de races, ambiance chaleureuse.</div>
+      <div class="time-badge">&#x23F0; Lancement · n'importe quand</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #15</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F43E; Et vous, quel est votre parc canin préféré en PACA ?
+
+On veut tout savoir ! &#x1F60D;
+
+Vous habitez Marseille, Nice, Toulon, Aix, Avignon ou ailleurs en PACA ? Quel est l'espace canin que vous et votre chien aimez le plus ?
+
+Dites-nous :
+&#x1F4CD; Le nom du parc et la ville
+&#x2B50; Votre note sur 5
+&#x1F43E; Le prénom de votre chien (et sa race si vous voulez !)
+&#x1F4F8; Bonus : glissez une photo de votre toutou dans cet espace !
+
+On lit tous vos commentaires et on ajoute régulièrement de nouveaux espaces sur ParcAChien grâce à vos suggestions. Vous êtes notre meilleure source d'information !
+
+La réponse avec le plus de likes gagne... notre admiration éternelle et une mise en avant sur notre page &#x1F3C6; On plaisante (à moitié).
+
+Allez, à vos commentaires ! &#x1F447;&#x1F447;&#x1F447;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #paca #dogpark #espacecain #community #votepreferé #marseille #nice #toulon #aix #chiensdepaca</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog park people community happy". Maîtres et chiens en groupe dans un parc, ambiance conviviale, sourires, interactions.</div>
+      <div class="time-badge">&#x23F0; Dim · 10h–12h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #16</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F43E; Taguez un ami qui a un chien — il va adorer ParcAChien !
+
+Vous connaissez quelqu'un qui possède un chien en PACA et qui passe des heures à chercher où le promener ? Dites-leur qu'on existe ! &#x1F601;
+
+ParcAChien, c'est plus de 308 espaces canins référencés sur toute la région — gratuits, avec les adresses exactes, les horaires, les équipements et les avis d'autres propriétaires. Un gain de temps monstre pour trouver LE bon spot.
+
+&#x1F447; Taguez cet ami dans les commentaires !
+
+Quelques profils qui vont adorer :
+&#x1F43E; L'ami qui vient d'adopter un chien et ne sait pas encore où aller
+&#x1F43E; Le voisin dont le chien a besoin de socialiser
+&#x1F43E; La famille qui a un grand chien dans un appartement
+&#x1F43E; La personne qui déménage en PACA avec son chien
+
+On se retrouve dans les commentaires — et si vous voulez nous faire plaisir, likez et partagez cette page ! &#x1F917;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #paca #espacecain #tagueztonnami #viral #dogpark #marseille #nice #toulon #partage</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "two friends dog park laughing" ou "dog owners friends walk". Deux amis avec leurs chiens qui se retrouvent dans un parc, joie partagée.</div>
+      <div class="time-badge">&#x23F0; Ven · 18h–20h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #17</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F43E; Votre chien mérite le meilleur — et le meilleur, c'est maintenant.
+
+Il y a quelque chose de particulier dans ce moment où vous ouvrez la grille de l'espace canin et que vous voyez votre chien partir au galop, la queue folle, les oreilles au vent.
+
+Ce moment de liberté totale, c'est un cadeau que vous lui offrez. Et en PACA, la chance qu'on a, c'est d'avoir 308 espaces canins gratuits pour lui offrir ça, encore et encore.
+
+Que vous soyez à Marseille et son parc Gauffredy, à Toulon et ses 11 000 m² du Parc Raoulx, ou à Nice dans le calme de Cimiez — votre chien a un espace qui lui correspond.
+
+ParcAChien est là pour vous aider à trouver le bon endroit, au bon moment.
+
+&#x1F4F1; Notre application arrive bientôt sur l'App Store et Google Play — géolocalisation, avis, horaires en temps réel, tout en un.
+
+En attendant, explorez notre site et trouvez votre prochain terrain de jeu favori. &#x1F43E;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #chien #liberté #doglife #paca #espacecain #dogpark #chiensdepaca #bonheur #lifestylechien</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "dog running free sunset golden hour". Chien au galop dans la lumière dorée du coucher de soleil. Image émotionnelle, lifestyle premium.</div>
+      <div class="time-badge">&#x23F0; Dim · 18h–20h</div>
+    </div>
+  </div>
+
+  <!-- SÉRIE 5 — PARTENAIRES & SERVICES -->
+  <div class="series-title">Série 5 — Partenaires &amp; services (3 posts)</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #18</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4CB; Vétérinaires, animaleries, toiletteurs en PACA : notre annuaire est en ligne !
+
+Parce qu'un chien heureux, c'est aussi un chien bien soigné, on a lancé notre annuaire des professionnels canins en PACA sur ParcAChien. &#x1F43E;
+
+Vous y retrouverez :
+&#x1F3E5; Les cabinets vétérinaires par ville et par arrondissement
+&#x2702;&#xFE0F; Les salons de toilettage avec avis et tarifs
+&#x1F6D2; Les animaleries spécialisées pour l'alimentation, les accessoires, les jouets
+&#x1F4CD; Tout géolocalisé et triable par zone géographique
+
+Fini de chercher un vétérinaire d'urgence un dimanche soir en ne sachant pas qui appeler. ParcAChien devient votre référence complète pour tout ce qui touche à la vie avec un chien en PACA.
+
+Parce qu'on veut être utiles, pas juste informatifs.
+
+&#x1F4F1; Consultez l'annuaire et trouvez le professionnel qui correspond à vos besoins !
+
+&#x1F517; https://www.parcachien.com/partenaires
+
+#parcachien #vétérinaire #animalerie #toilettage #chien #paca #annuaire #marseille #nice #toulon #sanimalchien</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "veterinarian dog clinic care" ou "dog grooming professional". Vétérinaire souriant avec un chien, ambiance professionnelle chaleureuse.</div>
+      <div class="time-badge">&#x23F0; Mar · 10h–12h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #19</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F3E5; Vous êtes vétérinaire, toiletteur ou animalerie en PACA ?
+
+On cherche des partenaires locaux pour rejoindre l'annuaire ParcAChien ! &#x1F43E;
+
+ParcAChien, c'est la plateforme de référence des propriétaires de chiens en région PACA — avec des centaines de visites mensuelles de maîtres qui cherchent activement des services pour leur animal.
+
+En rejoignant notre annuaire, vous bénéficiez :
+&#x2705; D'une fiche complète avec vos coordonnées, horaires et spécialités
+&#x2705; D'une visibilité auprès d'une communauté ciblée de propriétaires de chiens
+&#x2705; D'un accès à notre section partenaires dédiée
+&#x2705; D'une mention sur nos publications (quand c'est pertinent)
+
+C'est simple, local, et au service de la communauté canine de PACA.
+
+Vous êtes intéressé·e ou vous connaissez un professionnel qui devrait nous rejoindre ? Envoyez-nous un message privé ou visitez notre page partenaires !
+
+&#x1F517; https://www.parcachien.com/partenaires
+
+#parcachien #partenaire #vétérinaire #animalerie #toilettage #paca #marseille #nice #toulon #serviceschien #professionnelcanin</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "pet business professional partnership" ou "vet clinic happy dog". Image professionnelle et chaleureuse, logo-ready, fond clair ou médical.</div>
+      <div class="time-badge">&#x23F0; Jeu · 9h–11h</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="post-number">POST #20</span>
+      <span class="copy-badge">&#x1F4CB; Copier</span>
+    </div>
+    <div class="post-text">&#x1F4F1; ParcAChien arrive sur l'App Store et Google Play — très bientôt !
+
+On a une grande nouvelle pour la communauté : l'application ParcAChien mobile est en cours de développement et elle arrive bientôt sur l'App Store (iPhone) et Google Play (Android) ! &#x1F389;
+
+Ce que vous pourrez faire avec l'appli :
+&#x1F4CD; Trouver l'espace canin le plus proche de vous en temps réel (géolocalisation)
+&#x2B50; Lire et laisser des avis sur les parcs
+&#x1F4F8; Partager des photos de votre chien dans ses espaces préférés
+&#x1F4AC; Rejoindre la communauté et discuter avec d'autres propriétaires
+&#x1F6CE;&#xFE0F; Retrouver les partenaires vétérinaires et services près de chez vous
+
+En attendant, tout est disponible sur notre site — et si vous voulez être parmi les premiers informés de la sortie de l'appli, suivez notre page !
+
+Likez ce post si vous attendez l'appli ParcAChien avec impatience &#x1F43E;&#x1F43E;&#x1F43E;
+
+&#x1F517; https://www.parcachien.com
+
+#parcachien #applichienmobile #appstore #googleplay #chien #paca #teaserapp #dogapp #mobileapp #chiensdepaca #bientot</div>
+    <div class="meta-row">
+      <div class="image-suggestion"><strong>&#x1F5BC;&#xFE0F; Image :</strong> Unsplash — "mobile app dog owner phone park" ou créer un mockup de l'appli avec un iPhone en main dans un parc. Ambiance tech + nature.</div>
+      <div class="time-badge">&#x23F0; Ven · 12h–14h</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>ParcAChien &mdash; <a href="https://www.parcachien.com">www.parcachien.com</a> &mdash; Tous droits réservés &mdash; Généré pour la page Facebook @parcachien</p>
+</footer>
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import InstallPWA from "@/components/InstallPWA";
+import { ThemeProvider } from "next-themes";
+import { LangProvider } from "@/components/LangToggle";
 
 export const metadata: Metadata = {
   title: "ParcAChien — Parcs à chiens en PACA | Espaces canins Marseille, Nice, Toulon",
@@ -57,10 +59,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className="h-full">
-      <body className="h-full flex flex-col bg-[#FAF8F5]">
-        {children}
-        <InstallPWA />
+    <html lang="fr" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <LangProvider>
+            {children}
+            <InstallPWA />
+          </LangProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

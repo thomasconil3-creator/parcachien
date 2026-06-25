@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import { PACA_PARKS } from "@/lib/parks-data";
-import { cityToSlug } from "@/lib/utils";
 import SeoFooter from "@/components/SeoFooter";
+import ParcsSearch from "@/components/ParcsSearch";
+import ContentNav from "@/components/ContentNav";
 
 export const metadata: Metadata = {
   title: "Tous les parcs à chiens en PACA — ParcAChien",
@@ -35,78 +36,32 @@ export default function ParcsIndexPage() {
 
   const totalParks = PACA_PARKS.length;
 
+  // Aplatir pour le composant de recherche
+  const allCities = Object.entries(byDept).flatMap(([dept, cities]) =>
+    cities.map(c => ({ ...c, dept, deptName: DEPT_NAMES[dept] || `Département ${dept}` }))
+  );
+
   return (
-    <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>
-      <nav style={{ marginBottom: 24, fontSize: 13, color: "#888" }}>
-        <a href="/" style={{ color: "#7C6EF5", textDecoration: "none" }}>ParcAChien</a>
-        {" › "}
-        Parcs
-      </nav>
+    <div style={{ minHeight: "100vh", background: "var(--neutral-50)" }}>
+      <ContentNav />
+      <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 900, margin: "0 auto", padding: "40px 20px 80px" }}>
+        <nav style={{ marginBottom: 24, fontSize: 13, color: "var(--neutral-500)" }}>
+          <a href="/" style={{ color: "#7C6EF5", textDecoration: "none" }}>ParcAChien</a>
+          {" › "}
+          Parcs
+        </nav>
 
-      <h1 style={{ fontSize: 32, fontWeight: 800, color: "#1a1a2e", marginBottom: 8 }}>
-        🐾 Parcs à chiens en PACA
-      </h1>
-      <p style={{ color: "#555", fontSize: 16, marginBottom: 40 }}>
-        {totalParks} espaces canins recensés dans 6 départements. Données issues d'OpenStreetMap et de sources officielles.
-      </p>
+        <h1 style={{ fontSize: 32, fontWeight: 800, color: "var(--neutral-800)", marginBottom: 8 }}>
+          🐾 Parcs à chiens en PACA
+        </h1>
+        <p style={{ color: "var(--neutral-500)", fontSize: 16, marginBottom: 40 }}>
+          {totalParks} espaces canins recensés dans 6 départements. Données issues d'OpenStreetMap et de sources officielles.
+        </p>
 
-      {Object.entries(byDept)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([dept, cities]) => (
-          <section key={dept} style={{ marginBottom: 40 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#7C6EF5", marginBottom: 16, paddingBottom: 8, borderBottom: "2px solid #f0eeff" }}>
-              {DEPT_NAMES[dept] || `Département ${dept}`}
-              <span style={{ fontSize: 13, fontWeight: 500, color: "#aaa", marginLeft: 10 }}>
-                ({cities.reduce((s, c) => s + c.count, 0)} parcs)
-              </span>
-            </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
-              {cities
-                .sort((a, b) => b.count - a.count)
-                .map(({ city, count }) => (
-                  <a
-                    key={city}
-                    href={`/parcs/${cityToSlug(city)}`}
-                    style={{
-                      display: "block",
-                      background: "#fff",
-                      border: "1px solid #e8e4f0",
-                      borderRadius: 12,
-                      padding: "14px 18px",
-                      textDecoration: "none",
-                      color: "#1a1a2e",
-                      boxShadow: "0 2px 6px rgba(124,110,245,0.06)",
-                      transition: "box-shadow 0.2s",
-                    }}
-                  >
-                    <strong style={{ fontSize: 15, display: "block", marginBottom: 4 }}>{city}</strong>
-                    <span style={{ fontSize: 12, color: "#7C6EF5", fontWeight: 600 }}>
-                      {count} parc{count > 1 ? "s" : ""}
-                    </span>
-                  </a>
-                ))}
-            </div>
-          </section>
-        ))}
+        <ParcsSearch cities={allCities} totalParks={totalParks} />
 
-      <div style={{ marginTop: 48, textAlign: "center" }}>
-        <a
-          href="/"
-          style={{
-            display: "inline-block",
-            background: "#7C6EF5",
-            color: "#fff",
-            padding: "14px 32px",
-            borderRadius: 50,
-            fontWeight: 700,
-            fontSize: 15,
-            textDecoration: "none",
-          }}
-        >
-          🗺️ Voir la carte interactive
-        </a>
-      </div>
-      <SeoFooter />
-    </main>
+        <SeoFooter />
+      </main>
+    </div>
   );
 }
