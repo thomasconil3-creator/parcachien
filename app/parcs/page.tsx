@@ -42,22 +42,32 @@ export default function ParcsIndexPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--neutral-50)" }}>
+    <div className="min-h-screen" style={{ background: "var(--neutral-50)" }}>
       <ContentNav />
-      <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 900, margin: "0 auto", padding: "40px 20px 80px" }}>
-        <nav style={{ marginBottom: 24, fontSize: 13, color: "var(--neutral-500)" }}>
-          <a href="/" style={{ color: "#7C6EF5", textDecoration: "none" }}>ParcAChien</a>
-          {" › "}
-          Parcs
+      <main className="max-w-5xl mx-auto px-5 py-12">
+        {/* Breadcrumb */}
+        <nav className="mb-8 text-sm" style={{ color: "var(--neutral-500)" }}>
+          <a href="/" className="no-underline hover:underline" style={{ color: "#7C6EF5" }}>
+            ParcAChien
+          </a>
+          <span className="mx-2">›</span>
+          <span className="text-neutral-700 dark:text-neutral-300">Annuaire des Parcs</span>
         </nav>
 
-        <h1 style={{ fontSize: 32, fontWeight: 800, color: "var(--neutral-800)", marginBottom: 8 }}>
-          🐾 Parcs à chiens en PACA
-        </h1>
-        <p style={{ color: "var(--neutral-500)", fontSize: 16, marginBottom: 40 }}>
-          {totalParks} espaces canins recensés dans 6 départements. Données issues d'OpenStreetMap et de sources officielles.
-        </p>
+        {/* Header */}
+        <div className="mb-12">
+          <h1
+            className="text-4xl sm:text-5xl font-black mb-4 leading-tight"
+            style={{ color: "var(--neutral-800)", fontFamily: "'Nunito', sans-serif" }}
+          >
+            🐾 Parcs à chiens en PACA
+          </h1>
+          <p className="text-lg sm:text-xl leading-relaxed max-w-2xl text-neutral-500 dark:text-neutral-400">
+            Explorez les <strong>{totalParks} espaces canins</strong> recensés dans les 6 départements de la région PACA. Données qualifiées issues d'OpenStreetMap et validées par la communauté.
+          </p>
+        </div>
 
+        {/* Interactive Search Component */}
         <ParcsSearch cities={allCities} totalParks={totalParks} />
 
         <SeoFooter />

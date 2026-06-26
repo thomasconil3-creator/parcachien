@@ -653,6 +653,93 @@ const ARTICLES: Record<string, {
       <p><strong>→</strong> <a href="/">Accéder à la carte des espaces canins de Marseille</a></p>
     `,
   },
+  "les-plus-belles-plages-autorisees-aux-chiens-en-paca": {
+    title: "Les plus belles plages autorisées aux chiens en PACA (2026)",
+    description: "Où baigner votre chien en région PACA ? Guide complet des plages autorisées aux chiens dans les Bouches-du-Rhône, le Var et les Alpes-Maritimes.",
+    date: "24 juin 2026",
+    readTime: "5 min",
+    category: "Guide",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+    content: `
+      <p>Avec l'arrivée des beaux jours, partager une baignade avec son compagnon à quatre pattes est l'un des plus grands plaisirs de l'été en région Provence-Alpes-Côte d'Azur (PACA). Cependant, la réglementation côtière est stricte. Voici notre sélection des <strong>plus belles plages autorisées aux chiens en PACA</strong>.</p>
+
+      <h2>1. Les plages canines du Var (83) — Le paradis du chien de plage</h2>
+      <p>Le Var est sans conteste le département le plus accueillant pour les chiens de baignade en PACA. Plusieurs communes y ont aménagé de superbes espaces :</p>
+      <ul>
+        <li><strong>La plage de Tout-Petit (Bandol)</strong> : Située à l'entrée de la ville, cette crique de galets ombragée est réservée exclusivement aux propriétaires de chiens. L'eau y est limpide et le cadre magnifique.</li>
+        <li><strong>La plage canine de l'Argentière (La Londe-les-Maures)</strong> : Un large espace de sable fin dédié aux chiens à l'extrême est de la plage de l'Argentière. Idéal pour faire courir votre compagnon.</li>
+        <li><strong>La plage des Esclamandes (Fréjus)</strong> : Un grand espace sauvage situé à l'embouchure de l'Argens, où les chiens sont admis en liberté.</li>
+      </ul>
+
+      <h2>2. Les plages canines des Alpes-Maritimes (06)</h2>
+      <p>Sur la Côte d'Azur, Nice et les communes limitrophes proposent également des zones dédiées :</p>
+      <ul>
+        <li><strong>La plage de Carras (Nice)</strong> : Située juste en face du monument aux morts, c'est la seule plage niçoise autorisée aux chiens. Elle est bien signalée et dispose d'une douche pour rincer votre chien. Retrouvez plus d'infos sur notre <a href="/blog/espaces-canins-nice-cote-azur">guide des espaces canins à Nice</a>.</li>
+        <li><strong>La plage de la Lanterne (Cagnes-sur-Mer)</strong> : Située près de l'hippodrome, cette plage de galets accueille les chiens tenus en laisse toute l'année.</li>
+        <li><strong>La plage de Golfe-Juan (Vallauris)</strong> : Un enclos en sable fin réservé aux baignades canines.</li>
+      </ul>
+
+      <h2>3. Les Bouches-du-Rhône (13) et Marseille</h2>
+      <p>Le département des Bouches-du-Rhône est plus restrictif, mais quelques pépites subsistent :</p>
+      <ul>
+        <li><strong>La plage de la Pointe-Rouge (Marseille 13008)</strong> : Hors saison balnéaire (d'octobre à avril), les chiens sont tolérés sur la plage. Consultez également notre article sur le <a href="/blog/parc-a-chien-marseille-8eme-arrondissement">8ème arrondissement de Marseille</a>.</li>
+        <li><strong>Les criques du Parc des Calanques</strong> : Les chiens tenus en laisse sont autorisés sur les sentiers du Parc National, mais interdits sur les plages de mai à septembre pour préserver la faune marine. Consultez notre <a href="/blog/balade-chien-calanques-marseille">guide complet des Calanques</a>.</li>
+        <li><strong>La plage de la Ciotat (La Ciotat)</strong> : Un espace canin de baignade a été mis en place près du port de plaisance.</li>
+      </ul>
+
+      <h2>Règles de sécurité pour la baignade canine</h2>
+      <ul>
+        <li><strong>Rinçage obligatoire</strong> : Le sel irrite la peau et les coussinets. Rincez toujours votre chien à l'eau claire après la baignade.</li>
+        <li><strong>Eau fraîche</strong> : Ne laissez pas votre chien boire l'eau de mer (risque de déshydratation sévère). Apportez une bouteille d'eau douce.</li>
+        <li><strong>Gare aux coups de chaleur</strong> : Évitez les heures les plus chaudes (11h-16h) et proposez de l'ombre à votre chien.</li>
+        <li><strong>Respectez les autres</strong> : Gardez votre chien sous contrôle pour le confort de tous les usagers de la plage.</li>
+      </ul>
+
+      <p><strong>Partenariat externe :</strong> Pour connaître la qualité des eaux de baignade en temps réel en PACA, vous pouvez consulter le site officiel du <a href="https://baignades.sante.gouv.fr/" target="_blank" rel="noopener noreferrer">Ministère de la Santé</a>.</p>
+    `,
+  },
+  "comment-declarer-et-retrouver-un-chien-perdu-en-paca": {
+    title: "Comment déclarer et retrouver un chien perdu en PACA ?",
+    description: "Votre chien s'est sauvé en PACA ? Pas de panique. Voici les étapes clés : déclaration I-CAD, réseaux d'entraide, contact des fourrières et SPA de Marseille et Nice.",
+    date: "22 juin 2026",
+    readTime: "6 min",
+    category: "Conseils & Santé",
+    image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1200&q=80",
+    content: `
+      <p>La perte d'un animal de compagnie est une situation extrêmement stressante. En Provence-Alpes-Côte d'Azur, avec les vastes massifs forestiers et les zones urbaines denses, les chiens peuvent rapidement se perdre. Voici la marche à suivre étape par étape pour <strong>déclarer et retrouver un chien perdu en PACA</strong>.</p>
+
+      <h2>1. Signalez la perte à l'I-CAD (Obligatoire et urgent)</h2>
+      <p>L'I-CAD est le fichier national d'identification des carnivores domestiques. Si votre chien est identifié (par puce ou tatouage), c'est votre meilleure chance de le retrouver.</p>
+      <ul>
+        <li>Connectez-vous sur le site officiel de l'<a href="https://www.i-cad.fr/" target="_blank" rel="noopener noreferrer">I-CAD</a> ou via l'application Filalapat.</li>
+        <li>Déclarez votre animal comme "Perdu".</li>
+        <li>Vérifiez que vos coordonnées (téléphone, adresse) sont bien à jour dans votre espace personnel.</li>
+      </ul>
+
+      <h2>2. Publiez sur les réseaux d'entraide locaux</h2>
+      <p>La communauté est un allié précieux. Plusieurs plateformes vous permettent de diffuser une alerte :</p>
+      <ul>
+        <li>Publiez un signalement sur le <a href="/#forum">Forum ParcAChien</a> dans la catégorie <strong>Perdu/Trouvé</strong> pour alerter instantanément les autres propriétaires de votre secteur.</li>
+        <li>Postez sur la page Facebook <strong>Pet Alert PACA</strong> (Pet Alert 13, Pet Alert 83, Pet Alert 06).</li>
+        <li>Utilisez des applications citoyennes locales et prévenez vos voisins.</li>
+      </ul>
+
+      <h2>3. Contactez les fourrières et SPA de la région PACA</h2>
+      <p>Si votre chien est trouvé sur la voie publique, il sera généralement conduit à la fourrière animale ou dans un refuge partenaire de la SPA.</p>
+      <ul>
+        <li><strong>SPA Marseille (Refuge de la Valentine)</strong> : Contactez le refuge du 11e arrondissement au 04 91 45 63 50 ou visitez leur site <a href="https://www.la-spa.fr/marseille" target="_blank" rel="noopener noreferrer">SPA Marseille</a>.</li>
+        <li><strong>SPA de Nice (Refuge de Vence)</strong> : Pour les Alpes-Maritimes, contactez le refuge au 04 93 32 02 93 ou visitez le site de la <a href="https://www.spadecotdazur.com/" target="_blank" rel="noopener noreferrer">SPA Côte d'Azur</a>.</li>
+        <li><strong>Refuge de l'Espoir (Toulon/La Garde)</strong> : Contactez la structure locale si vous habitez le Var.</li>
+      </ul>
+
+      <h2>4. Enquêtez sur le terrain</h2>
+      <p>Retournez sur les derniers lieux fréquentés par votre chien. Utilisez des jouets sonores ou secouez une boîte de croquettes en l'appelant par son nom. Les chiens perdus ont tendance à rester à proximité de leur dernier point de repère s'ils ne sont pas effrayés.</p>
+      <p>Pour plus de conseils sur les règles de promenade et la gestion des sorties, lisez notre guide : <a href="/blog/preparer-premiere-visite-parc-canin">Comment préparer les sorties collectives de votre chien</a>.</p>
+
+      <h2>Que faire si vous trouvez un chien errant ?</h2>
+      <p>Si vous trouvez un chien sans propriétaire en PACA, vérifiez s'il porte un collier avec un numéro de téléphone. Si ce n'est pas le cas, emmenez-le chez un vétérinaire partenaire (la lecture de puce est gratuite). Retrouvez la liste des <a href="/partenaires/marseille">vétérinaires partenaires à Marseille</a> ou <a href="/partenaires/nice">à Nice</a> sur notre site.</p>
+    `,
+  },
 };
 
 export async function generateStaticParams() {

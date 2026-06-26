@@ -49,79 +49,56 @@ export default function ParcsSearch({ cities, totalParks }: { cities: CityData[]
 
   return (
     <div>
-      {/* Barre de recherche */}
-      <div style={{ position: "relative", marginBottom: 32 }}>
-        <Search
-          size={18}
-          style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--neutral-500)" }}
-        />
+      {/* Search Input */}
+      <div className="relative mb-10 max-w-xl">
+        <span className="absolute left-4 top-3.5 text-neutral-400 dark:text-neutral-500">
+          <Search size={18} />
+        </span>
         <input
           type="text"
           placeholder={tr.search}
           value={query}
           onChange={e => setQuery(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "14px 16px 14px 44px",
-            borderRadius: 16,
-            border: "2px solid var(--neutral-200)",
-            background: "var(--neutral-100)",
-            color: "var(--neutral-800)",
-            fontSize: 15,
-            outline: "none",
-            boxSizing: "border-box",
-            transition: "border-color 0.2s",
-          }}
-          onFocus={e => (e.target.style.borderColor = "#7C6EF5")}
-          onBlur={e => (e.target.style.borderColor = "var(--neutral-200)")}
+          className="w-full pl-12 pr-4 py-3 rounded-2xl border text-sm sm:text-base bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#7C6EF5]/50 focus:border-[#7C6EF5] transition-all shadow-sm"
         />
       </div>
 
-      {/* Résultats */}
+      {/* Results */}
       {filtered.length === 0 ? (
-        <p style={{ textAlign: "center", color: "var(--neutral-500)", padding: "40px 0" }}>
-          {tr.noResult} "{query}"
-        </p>
+        <div className="text-center py-16 bg-white dark:bg-neutral-900/40 rounded-2xl border border-dashed border-neutral-200 dark:border-neutral-800">
+          <span className="text-3xl block mb-2">🔍</span>
+          <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+            {tr.noResult} "{query}"
+          </p>
+        </div>
       ) : (
         Object.entries(byDept)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([dept, deptCities]) => (
-            <section key={dept} style={{ marginBottom: 40 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#7C6EF5", marginBottom: 16, paddingBottom: 8, borderBottom: "2px solid var(--neutral-200)" }}>
-                {deptCities[0].deptName}
-                <span style={{ fontSize: 13, fontWeight: 500, color: "var(--neutral-500)", marginLeft: 10 }}>
-                  ({deptCities.reduce((s, c) => s + c.count, 0)} {lang === "fr" ? "parcs" : "parks"})
+            <section key={dept} className="mb-10">
+              <h2
+                className="text-lg sm:text-xl font-extrabold text-[#7C6EF5] dark:text-[#a89cf7] mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between"
+                style={{ fontFamily: "'Nunito', sans-serif" }}
+              >
+                <span>{deptCities[0].deptName}</span>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                  {deptCities.reduce((s, c) => s + c.count, 0)} {deptCities.reduce((s, c) => s + c.count, 0) > 1 ? tr.parksPlural : tr.parks}
                 </span>
               </h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {deptCities
                   .sort((a, b) => b.count - a.count)
                   .map(({ city, count }) => (
                     <a
                       key={city}
                       href={`/parcs/${cityToSlug(city)}`}
-                      style={{
-                        display: "block",
-                        background: "var(--neutral-100)",
-                        border: "1px solid var(--neutral-200)",
-                        borderRadius: 12,
-                        padding: "14px 18px",
-                        textDecoration: "none",
-                        color: "var(--neutral-800)",
-                        boxShadow: "0 2px 6px rgba(124,110,245,0.06)",
-                        transition: "all 0.2s",
-                      }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(124,110,245,0.15)";
-                        (e.currentTarget as HTMLElement).style.borderColor = "#7C6EF5";
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 6px rgba(124,110,245,0.06)";
-                        (e.currentTarget as HTMLElement).style.borderColor = "var(--neutral-200)";
-                      }}
+                      className="group block p-5 bg-white dark:bg-neutral-900/60 border border-neutral-200/80 dark:border-neutral-800/80 rounded-2xl hover:border-[#7C6EF5] dark:hover:border-[#7C6EF5] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-purple-500/5 no-underline"
                     >
-                      <strong style={{ fontSize: 15, display: "block", marginBottom: 4 }}>{city}</strong>
-                      <span style={{ fontSize: 12, color: "#7C6EF5", fontWeight: 600 }}>
+                      <strong className="text-base text-neutral-800 dark:text-neutral-100 group-hover:text-[#7C6EF5] transition-colors block mb-1">
+                        {city}
+                      </strong>
+                      <span className="text-xs font-bold text-[#F59500] dark:text-amber-400">
                         {count} {count > 1 ? tr.parksPlural : tr.parks}
                       </span>
                     </a>
@@ -131,19 +108,11 @@ export default function ParcsSearch({ cities, totalParks }: { cities: CityData[]
           ))
       )}
 
-      <div style={{ marginTop: 48, textAlign: "center" }}>
+      {/* Bottom CTA */}
+      <div className="mt-14 text-center">
         <a
           href="/"
-          style={{
-            display: "inline-block",
-            background: "#7C6EF5",
-            color: "#fff",
-            padding: "14px 32px",
-            borderRadius: 50,
-            fontWeight: 700,
-            fontSize: 15,
-            textDecoration: "none",
-          }}
+          className="inline-block bg-[#7C6EF5] text-white font-extrabold px-8 py-3.5 rounded-2xl no-underline text-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all hover:scale-105"
         >
           🗺️ {tr.viewMap}
         </a>

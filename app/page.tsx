@@ -15,7 +15,8 @@ import MessagesPage from "@/components/MessagesPage";
 import { useStore } from "@/lib/store";
 import { createClient } from "@/utils/supabase/client";
 import { getActiveCheckins, addCheckin, getMyDog } from "@/lib/db";
-import { Search, MapIcon, MapPin, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut, Database, Briefcase } from "lucide-react";
+import { Search, MapIcon, MapPin, List, PawPrint, User, Navigation, Newspaper, MessageSquare, SlidersHorizontal, MessageCircle, BookOpen, LogIn, LogOut, Database, Briefcase, Trophy } from "lucide-react";
+import ConcoursPage from "@/components/ConcoursPage";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -31,13 +32,14 @@ const DEPARTMENTS: Record<string, string> = {
 
 const NAV_TABS = [
   { id: "map" as const, icon: MapIcon, label: "Explorer" },
-  { id: "feed" as const, icon: Newspaper, label: "Fil actu" },
+  { id: "feed" as const, icon: Newspaper, label: "Social" },
+  { id: "concours" as const, icon: Trophy, label: "Concours" },
   { id: "messages" as const, icon: MessageCircle, label: "Messages" },
   { id: "forum" as const, icon: MessageSquare, label: "Forum" },
 ];
 
 export default function Home() {
-  const [section, setSection] = useState<"map" | "feed" | "messages" | "forum">("map");
+  const [section, setSection] = useState<"map" | "feed" | "concours" | "messages" | "forum">("map");
   const [view, setView] = useState<"map" | "list">("map");
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
@@ -330,6 +332,7 @@ export default function Home() {
       {/* ── MAIN ── */}
       <main className="flex-1 min-h-0 overflow-hidden flex justify-center bg-[#F2EFE9] w-full">
         {section === "feed" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><FeedPage /></div>}
+        {section === "concours" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><ConcoursPage /></div>}
         {section === "forum" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><ForumPage /></div>}
         {section === "messages" && <div className="w-full max-w-2xl h-full shadow-lg border-x border-gray-200 overflow-hidden flex flex-col"><MessagesPage /></div>}
         {section === "map" && (
