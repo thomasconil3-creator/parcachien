@@ -20,6 +20,8 @@ const BLOG_SLUGS = [
   "choisir-croquettes-chien-conseils",
   "parc-chien-avignon-villeneuve",
   "veterinaire-urgence-chien-paca",
+  "les-plus-belles-plages-autorisees-aux-chiens-en-paca",
+  "comment-declarer-et-retrouver-un-chien-perdu-en-paca",
 ];
 
 const MARSEILLE_ARRONDISSEMENTS = [
